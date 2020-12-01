@@ -4,6 +4,7 @@
 mex('-setup', 'C')
 
 MAKE('+Geometry/@Polyhedron/', 'crossMex')
+MAKE('+Substrate/@Substrate/', 'needsChecking_box')
 
 function [] = MAKE(folder, varargin)
 
