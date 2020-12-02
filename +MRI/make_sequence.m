@@ -9,13 +9,13 @@ function [sequence] = make_sequence(NT, dt_max, SeqName, varargin)
 
 switch upper(SeqName)
     case 'PGSE'
-        [Gmax, Delta, epsilon, delta] = deal(varargin{:});
+        [Gmax, epsilon, Delta, delta] = parse(varargin, {'Gmax', 'epsilon', 'Delta', 'delta'});
         %TODO: do something
     case {'MCSE', 'M2SE'}
-        [Gmax, epsilon, delta1, delta2] = deal(varargin{:});
+        [Gmax, epsilon, delta1, delta2] = parse(varargin, {'Gmax', 'epsilon', 'delta1', 'delta2'});
         %TODO: do something
     case 'STEAM'
-        [Gmax, Delta, epsilon, delta] = deal(varargin{:});
+        [Gmax, epsilon, Delta, delta] = parse(varargin, {'Gmax', 'epsilon', 'Delta', 'delta'});
         %TODO: do something
     otherwise % dummy sequence
         dt = ones(1, NT)*dt_max(1);
@@ -23,5 +23,20 @@ switch upper(SeqName)
 end
 
 sequence = MRI.ScanSequence(dt, gG);
+
+end
+
+function [varargout] = parse(args, names)
+
+if isscalar(args) && isstruct(args{1})
+    argstruct = args{1};
+    N = length(names);
+    varargout = cell(1, N);
+    for i = 1:N
+        varargout{i} = argstruct.(names{i});
+    end
+else
+    varargout = args;
+end
 
 end
