@@ -1,0 +1,9 @@
+# Ignore MATLAB autosave files
+*.asv
+*.m~
+# Ignore MEX files
+*.mex*
+# Ignore cluster profile directory
+cluster/
+# Ignore MATLAB data files
+*.mat
