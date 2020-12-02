@@ -1,0 +1,3 @@
+[submodule "ParforProgMon"]
+	path = +MonteCarlo/@ParticleWalker/private/ParforProgressbar
+	url = https://github.com/fsaxen/ParforProgMon.git
