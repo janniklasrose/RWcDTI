@@ -25,7 +25,18 @@ classdef Substrate < handle
         function obj = Substrate(dxdydz, myocytes, type, varargin)
 
             obj.dxdydz = dxdydz;
-            obj.myocytes = myocytes;
+
+            % store myocytes (convert first if necessary)
+            if ~isa(myocytes, 'Geometry.Polyhedron')
+                myos = repmat(Geometry.Polyhedron, size(myocytes));
+                for i = 1:numel(myocytes)
+                    myo = myocytes(i); % probably plain-old-struct
+                    myos(i) = Geometry.Polyhedron(myo.Vertices, myo.Faces);
+                end
+                obj.myocytes = myos;
+            else
+                obj.myocytes = myocytes;
+            end
 
             obj.type = type;
             validatestring(type, {'block', 'full'});
@@ -33,13 +44,13 @@ classdef Substrate < handle
                 case 'block'
                     p = inputParser;
                     addRequired(p, 'y_slice_minmax');
-                    addParameter(p, 'deg_rot_per_m_in_y', 0);
+                    addParameter(p, 'deg_rot_per_L_in_y', 0);
                     parse(p, varargin{:});
 
                     obj.transform = Substrate.Transform;
                     obj.transform.dxdydz_bb = dxdydz;
                     obj.transform.y_slice_minmax = p.Results.y_slice_minmax;
-                    obj.transform.deg_rot_per_m_in_y = p.Results.deg_rot_per_m_in_y;
+                    obj.transform.deg_rot_per_L_in_y = p.Results.deg_rot_per_L_in_y;
 
                 case 'full'
                     error('not implemented yet');
