@@ -1,3 +1,6 @@
 [submodule "ParforProgMon"]
 	path = +MonteCarlo/@ParticleWalker/private/ParforProgressbar
 	url = https://github.com/fsaxen/ParforProgMon.git
+[submodule "yamlmatlab"]
+	path = external/yamlmatlab
+	url = https://github.com/ewiger/yamlmatlab
