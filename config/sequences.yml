@@ -1,0 +1,38 @@
+# bvalue: 225e6
+# scanner: CMR_RBH
+# 225e6 s/(m^2) on CMR_RBH scanner (both directions combined)
+
+sequences:
+  Rose2019MRM: # DOI:10.1002/mrm.27561
+    nominal: # nominal sequences around G=40
+      PGSE:
+        Gmax: 40.572
+        Delta: 20.547
+        epsilon: 0.676
+        delta: 9.921
+      MCSE:
+        Gmax: 39.478
+        epsilon: 0.661
+        delta1: 7.819
+        delta2: 16.299
+      STEAM:
+        Gmax: 35.690
+        Delta: 1000
+        epsilon: 0.595
+        delta: 0.977
+    highG: # sequences with higher G=80
+      PGSE:
+        Gmax: 80
+        Delta: 16.976
+        epsilon: 1.333
+        delta: 4.385
+      MCSE:
+        Gmax: 80
+        epsilon: 1.333
+        delta1: 5.430
+        delta2: 7.997
+      STEAM:
+        Gmax: 80
+        Delta: 1000
+        epsilon: 0.667
+        delta: 0.034
