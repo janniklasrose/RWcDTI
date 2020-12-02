@@ -1,7 +1,7 @@
 function [position_LOCAL, position_rotated, fn_RotReverse] = transformPosition(obj, position)
 % transform position from global to local
 
-deg_rot_per_m_in_y = obj.deg_rot_per_m_in_y;
+deg_rot_per_L_in_y = obj.deg_rot_per_L_in_y;
 y_slice_minmax = obj.y_slice_minmax;
 dx = obj.dxdydz_bb(1);
 dy = obj.dxdydz_bb(2);
@@ -15,7 +15,7 @@ if abs(y_slice) < dy/2 % i.e. slice [0, dy], NOT [-dy, 0] (because we check the 
     A = 0; % explicit zero to avoid problems with rounding error
 else
     % if deg_rot_per_m_in_y is set to 0, no rotation is done
-    A = deg2rad(deg_rot_per_m_in_y)*y_slice;
+    A = deg2rad(deg_rot_per_L_in_y)*y_slice;
 end
 
 % --> TRANSFORM GLOBAL->LOCAL

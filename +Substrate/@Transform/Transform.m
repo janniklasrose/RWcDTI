@@ -2,7 +2,7 @@ classdef Transform
 
     properties
         dxdydz_bb(1, 3)
-        deg_rot_per_m_in_y = 0
+        deg_rot_per_L_in_y = 0
         y_slice_minmax
     end
 
@@ -29,7 +29,7 @@ classdef Transform
 
             % angle
             y = obj.dxdydz_bb(2)*iY;
-            angle = deg2rad(obj.deg_rot_per_m_in_y);
+            angle = deg2rad(obj.deg_rot_per_L_in_y);
             theta = angle*y;
 
             translated = LOCAL + offset;
