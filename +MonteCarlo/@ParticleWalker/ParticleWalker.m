@@ -7,7 +7,7 @@ classdef ParticleWalker < handle
     properties(SetAccess=private)
         position; % [nP x DIM] array of [x, y, z]-positions of all particles
         phase; % [nP x DIM] array of accumulated [x, y, z]-phase of all particles
-        flag; % [nP x 1] array of flags
+        flag; % {nP x 1} cell array of flags
     end
 
     properties(SetAccess=private)
@@ -36,7 +36,7 @@ classdef ParticleWalker < handle
             % init
             obj.position = zeros(N_p, 3, 'double'); % initially located at origin
             obj.phase = zeros(N_p, 3, 'double'); % initially no accuired phase
-            obj.flag = zeros(N_p, 1, 'uint8'); % initially unflagged
+            obj.flag = cell(N_p, 1); % initially unflagged
 
         end
     end

@@ -25,7 +25,7 @@ while needUpdate
     % check
     tries = tries + 1;
     if tries > 10
-        error('exec:stepsize', 'cannot draw step with limited size');
+        error('ParticleWalker:getLimitedStep:tries', 'Cannot draw step with limited size');
     end
 
     % update BEFORE checking new needUpdate (because of initialisation)

@@ -53,7 +53,7 @@ classdef Substrate < handle
                     obj.transform.deg_rot_per_L_in_y = p.Results.deg_rot_per_L_in_y;
 
                 case 'full'
-                    error('not implemented yet');
+                    error('Error:NotImplemented', 'Full geometry not supported');
                     %TODO: ensure .transform is an identity transform!!
             end
 

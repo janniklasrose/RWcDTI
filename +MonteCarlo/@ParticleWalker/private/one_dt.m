@@ -2,7 +2,7 @@ function [position] = one_dt(position, dt, stream, substrate)
 % Perform a single time step
 
 % get step length (dim=3 for 3D), max 5stdevs
-dxdydz_normaldistrib = getLimitedStep(3, 5, stream); % throws 'exec:stepsize' if it fails
+dxdydz_normaldistrib = getLimitedStep(3, 5, stream);
 
 myoIndex = position(1, 4);
 
@@ -24,24 +24,14 @@ while norm(dxdydz, 2) > ZERO
     
     counter = counter + 1;
     if counter > 50
-        error('exec:unfinishedstep', 'step has not finished after 50 substeps');
+        error('ParticleWalker:one_dt:unfinished', ...
+              'Step has not finished after 50 substeps');
     end
 
     % substrate checks
     [position_LOCAL, position_rotated, fn_RotReverse] = substrate.transformPosition(position(1, 1:3));
     
-    try
-        intersectInfo = substrate.intersectMyocytes(position_LOCAL, dxdydz, 'local');
-    catch exception %TODO: is this try-catch needed?
-        switch exception.identifier
-            case 'exec:tooclose'
-                rethrow(exception); % is being handled
-            case 'exec:twointersect'
-                rethrow(exception); % is being handled
-            otherwise
-                rethrow(exception); % something else
-        end
-    end
+    intersectInfo = substrate.intersectMyocytes(position_LOCAL, dxdydz, 'local');
     % intersectInfo now contains info about first encountered intersection
 
     stepEps = 1e-8;
@@ -50,14 +40,11 @@ while norm(dxdydz, 2) > ZERO
         position_future = position_LOCAL + dxdydz;
         if ~substrate.block_bb.BoundingBox.containsPoint(position_future) % would leave the block
 
-            try
-                % may throw an error, just take it and flag particle
-                intersectInfoBB = substrate.block_bb.intersection(position_LOCAL, dxdydz);
-                if isempty(intersectInfoBB)
-                    error('empty intersection when there should be one');
-                end
-            catch except
-                error('exec:tooclose', 'Problem with block BB');
+            % may throw an error, just take it and flag particle
+            intersectInfoBB = substrate.block_bb.intersection(position_LOCAL, dxdydz);
+            if isempty(intersectInfoBB)
+                error('ParticleWalker:one_dt:bb_inconsistent', ...
+                      'Empty intersection when there should be one');
             end
             dxdydz_toIntersection = dxdydz*intersectInfoBB.t;
             dxdydz = dxdydz*(1-intersectInfoBB.t); % what's remaining
@@ -82,7 +69,7 @@ while norm(dxdydz, 2) > ZERO
             case 'constant'
                 probability_of_transit = substrate.kappa; % is constant probability of transit
             otherwise
-                error('BUG: wrong transit model');
+                error('Error:NotImplemented', 'Transit model not supported');
         end
 
         U = rand(stream, 1);

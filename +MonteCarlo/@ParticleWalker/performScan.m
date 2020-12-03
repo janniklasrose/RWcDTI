@@ -9,11 +9,10 @@ pos0 = obj.position;
     obj.position, obj.phase, obj.flag, obj.rng_seed, sequence, substrate);
 
 % check for particles that were flagged
-fprintf('Number of flagged particles: %i/%i\n', sum(obj.flag(:)~=0), numel(obj.flag(:)));
-valid = ~obj.flag;
+valid = cellfun(@isempty, obj.flag);
 
 % read-out happens inside voxel only
-insideVoxel = false(size(obj.flag));
+insideVoxel = false(size(obj.position, 1), 1);
 for iP = 1:numel(insideVoxel) % check for each particle
     insideVoxel(iP) = substrate.voxel.containsPoint(obj.position(iP, :));
 end

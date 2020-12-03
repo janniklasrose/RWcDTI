@@ -4,19 +4,10 @@ function [myoIndex] = search_myocytes(myocytes, position)
 
 myoIndex = NaN(); % initial guess (NaN == free space)
 for iMyocyte = 1:numel(myocytes)
-    try
-        inside = myocytes(iMyocyte).containsPoint(position);
-    catch exception
-        switch exception.identifier
-            case 'Geometry:Polyhedron:containsPoint'
-                error('Myocyte:inside', exception.message); % is being handled
-            otherwise
-                rethrow(exception);
-        end
-    end
+    inside = myocytes(iMyocyte).containsPoint(position);
     if inside
         if ~isnan(myoIndex) % check if already assigned to another myocyte
-            error('exec:init', 'Point cannot be inside multiple myocytes at the same time!');
+            error('Substrate:search_myocytes:multiple', 'Point cannot be inside multiple myocytes');
         end
         myoIndex = iMyocyte;
     end

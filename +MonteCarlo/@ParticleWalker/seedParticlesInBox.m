@@ -21,11 +21,13 @@ switch size(boundingBoxes, 1)
     case 6 % [xmin; xmax; ymin; ymax; zmin; zmax]
         % ok
     otherwise
-        error('boundingBoxes must be [M,N] with M=2,4,6 and N=N_p');
+        error('ParticleWalker:seedParticlesInBox:inconsistent', ...
+            'BBs must be [M,N] with M=2,4,6 and N=N_p');
 end
 % inconsistent
 if any(boundingBoxes(1:2:end) > boundingBoxes(2:2:end)) % some box has min > max for some dimension
-    error('boundingBoxes must be [[xmin;xmax;ymin;ymax;zmin;zmax], []]');
+    error('ParticleWalker:seedParticlesInBox:inconsistent', ...
+          'BBs must be [[xmin;xmax;ymin;ymax;zmin;zmax], []]');
 end
 % overlap
 for i = 1:N_b
@@ -33,7 +35,8 @@ for i = 1:N_b
     for j = (i+1):N_b
         box_j = boundingBoxes(:, j);
         if all(box_i(1:2:end)<box_j(2:2:end) & box_j(1:2:end)<box_i(2:2:end)) % overlap if min<max
-            error('ERROR');
+            error('ParticleWalker:seedParticlesInBox:inconsistent', ...
+                  'BBs cannot overlap');
         end
     end
 end
@@ -43,7 +46,8 @@ switch nargin()
         sideLengths = boundingBoxes(2:2:end, :)-boundingBoxes(1:2:end, :); % max(:)-min(:)
         hasZeroDim = sideLengths == 0;
         if any(any(hasZeroDim, 2) ~= all(hasZeroDim, 2)) % zero-dimension inconsistent across boxes
-            error('Each dimension must be either zero or non-zero across all boxes');
+            error('ParticleWalker:seedParticlesInBox:inconsistent', ...
+                  'Each dimension must be either zero or non-zero across all boxes');
         end
         sideLengths(all(hasZeroDim, 2), :) = []; % remove zero-dimensions
         boxVolumes = prod(sideLengths, 1);
@@ -58,10 +62,12 @@ switch nargin()
         end
         validateattributes(particlesPerBox, {'numeric'}, {'row', 'integer', 'nonnegative', 'finite'});
         if numel(particlesPerBox) ~= N_b % inconsistent
-            error('Dimension mismatch, need to assign particles for each box');
+            error('ParticleWalker:seedParticlesInBox:inconsistent', ...
+                  'Dimension mismatch, need to assign particles for each box');
         end
         if sum(particlesPerBox) ~= obj.N_p % inconsistent
-            error('Not all or too many particles assigned');
+            error('ParticleWalker:seedParticlesInBox:inconsistent', ...
+                  'Not all or too many particles assigned');
         end
     otherwise
         narginchk(2, 3);

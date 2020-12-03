@@ -54,7 +54,7 @@ function [] = mustBeIncreasingPairs(Range)
 % Validates that the input range is increasing pairs
 
 if any(Range(1:2:end) > Range(2:2:end)) % only disallow "strictly larger than"
-    error('Range must be increasing pairs (min <= max)!');
+    error('BoundingBox:Range:invalid', 'Range must be increasing pairs (min <= max)');
 end
 
 end

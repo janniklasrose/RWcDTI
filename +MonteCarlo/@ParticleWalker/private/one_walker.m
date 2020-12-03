@@ -5,7 +5,7 @@ function [pos_i, phi_i, flag_i] = one_walker(i, pos_all, phi_all, flag_all, rng_
 % load data
 pos_i  = pos_all(i, :);  % [ [x,y,z]_1 ; ... ; [x,y,z]_N ] % position
 phi_i  = phi_all(i, :);  % [ [x,y,z]_1 ; ... ; [x,y,z]_N ] % phase
-flag_i = flag_all(i, :); % [    f_1    ; ... ;    f_N    ] % flag
+flag_i = flag_all(i); % {f_1 ; ... ; f_N } % flag
 pos_i(1, 4) = inf; % we store final index in the 4th dimension. init here in case of error
 
 % init randomness
@@ -16,14 +16,14 @@ stream = RandStream.create('mlfg6331_64', 'Seed', rng_seed, ...
 
 % find initial position
 try
-    pos_i(1, 4) = substrate.findMyocyte(pos_i(1, 1:3), 'global'); % throws 'Myocyte:inside'
+    pos_i(1, 4) = substrate.findMyocyte(pos_i(1, 1:3), 'global');
 catch exception % initialisation failed
     switch exception.identifier
-        case 'Myocyte:inside'
-            flag_i = 1;
+        case 'Substrate:search_myocytes:multiple' % thrown by Substrate.findMyocyte
+            flag_i{1} = exception.identifier;
             return
         otherwise
-            rethrow(exception); % unexpected runtime error
+            rethrow(exception)
     end
 end
 
@@ -43,7 +43,8 @@ for n = 1:sequence.NT
     while ~step_success
         counter = counter + 1;
         if counter > 50 % give up after 50
-            flag_i = 2;
+            % rethrow the last exception we encountered
+            flag_i{1} = exception.identifier; %#ok<NODEF>
             return
         end
 
@@ -54,25 +55,23 @@ for n = 1:sequence.NT
             step_success = true; % no error thrown, that's it!
         catch exception
             switch exception.identifier
-                case 'exec:stepsize'
-                    continue; % Try again! Reason: cannot draw a step with the correct magnitude
-                case 'exec:twointersect'
-                    continue; % Try again! Reason: found two identical intersection points
-                case 'exec:unfinishedstep'
-                    continue; % Try again! Reason: step has too many substeps
-                case 'exec:tooclose'
-                    continue; % Try again! Reason: point was too close to an edge, vertex, face
-                case 'exec:leftdomain'
-                    flag_i = 3;
+                case {...
+                      'ParticleWalker:one_dt:unfinished', ... % step was too long
+                      'Polyhedron:intersection:uncertain', ... % too close to edge etc
+                     }
+                    continue; % Try again
+                case {...
+                      'Transform:transformPosition:where', ... % got lost, flag it!
+                      'Substrate:intersectMyocytes:duplicate' ... % odd, flag it!
+                      'Polyhedron:intersection:duplicate', ... % odd, flag it!
+                      'ParticleWalker:one_dt:bb_inconsistent', ... % odd, flag it!
+                     }
+                    flag_i{1} = exception.identifier;
                     return
-                case 'exec:whereami'
-                    flag_i = 4; % Reason: particle got lost wrt block bounding box
-                    return
-                case 'exec:whereami22'
-                    flag_i = 22; % ???
-                    return
-                otherwise
-                    rethrow(exception); % unexpected runtime error
+                case 'ParticleWalker:getLimitedStep:tries' % poor parameter choice
+                    rethrow(exception);
+                otherwise % unexpected runtime error
+                    rethrow(exception);
             end
         end
     end

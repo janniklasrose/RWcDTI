@@ -18,13 +18,13 @@ end
 
 % make sure ray stays away from face edges (includes vertices)
 if ~intersection_is_certain(intersect, u, v, t, true)
-    error('exec:tooclose', 'too close to edge, vertex, or face');
+    error('Polyhedron:intersection:uncertain', 'Too close to edge/vertex/face');
 end
 
 % find closest intersection and get info
 found_t = t(intersect);
 if numel(found_t) ~= numel(unique(found_t))
-    error('exec:twointersect', 'two equal t found');
+    error('Polyhedron:intersection:duplicate', 'Two equal t found');
 end
 [min_t, min_faceIDs] = min(found_t);
 found_ID = find(intersect);

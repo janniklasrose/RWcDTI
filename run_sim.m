@@ -32,7 +32,8 @@ if isfield(config.substrate.geometry.myocytes, 'file')
     myocytes = load(config.substrate.geometry.myocytes.file); % get from file
     myocytes = myocytes.myocytes;
 else
-    error('Not implemented'); % load .Vertices & .Faces directly from config file
+    % load .Vertices & .Faces directly from config file
+    error('Error:NotImplemented', 'Loading polyhedra from config not supported');
 end
 
 % load other geometry parameters

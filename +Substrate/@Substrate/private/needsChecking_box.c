@@ -5,9 +5,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     
     if (nrhs!=3) {
-        mexErrMsgTxt("three inputs needed");
+        mexErrMsgTxt("Three inputs needed");
     } else if(nlhs>1) {
-        mexErrMsgTxt("only one output allowed");
+        mexErrMsgTxt("Only one output allowed");
     }
     
     double *position_iP = mxGetPr(prhs[0]); // [x, y, z]
@@ -22,11 +22,11 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     }
     else if (N>1 && M!=1)
     {
-        mexErrMsgTxt("3th argument must be 1D array");
+        mexErrMsgTxt("3rd argument must be 1D array");
     }
     if (N%6 != 0)
     {
-        mexErrMsgTxt("3th argument must be have Nx6 elements");
+        mexErrMsgTxt("3rd argument must be have Nx6 elements");
     }
     N = N/6; // is Nx6 array
     plhs[0] = mxCreateLogicalMatrix(1, N);

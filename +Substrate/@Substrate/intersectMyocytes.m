@@ -21,16 +21,7 @@ needsChecks = obj.needsChecking(position, dxdydz, 'local'); % ~(wontEnter && isO
 for iMyocyte = find(needsChecks) % only relevant ones
 
     % find intersection
-    try
-        [info] = obj.myocytes(iMyocyte).intersection(position, dxdydz);
-    catch exception
-        switch exception.identifier
-            case 'exec:tooclose'
-                rethrow(exception); % is being handled
-            otherwise
-                rethrow(exception);
-        end
-    end
+    [info] = obj.myocytes(iMyocyte).intersection(position, dxdydz);
 
     % handle result
     if ~isempty(info) % intersection found
@@ -42,7 +33,7 @@ for iMyocyte = find(needsChecks) % only relevant ones
                 intersectInfo = info;
             elseif info.t == intersectInfo.t
                 % should not happen for a valid geometry, but check anyways
-                error('exec:twointersect', 'two identical intersection points found');
+                error('Substrate:intersectMyocytes:duplicate', 'Two intersections found');
             else
                 % leave it
             end

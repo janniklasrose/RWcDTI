@@ -40,7 +40,7 @@ function [y_slice] = find_yslice(pos_y, y_slice_minmax)
 
 i_slice = find(pos_y >= y_slice_minmax(1, :) & pos_y < y_slice_minmax(2, :), 1); % first find
 if isempty(i_slice)
-    error('exec:leftdomain', 'where am i?');
+    error('Transform:transformPosition:where', 'Corresponding slice not found');
 end
 % i_slice now holds index of slice we are in
 y_slice = y_slice_minmax(1, i_slice);

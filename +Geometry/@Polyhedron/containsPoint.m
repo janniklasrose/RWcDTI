@@ -29,7 +29,7 @@ for iPoint = 1:size(point, 1)
     while ~certain
         counter = counter + 1;
         if counter > 50
-            error('Geometry:Polyhedron:containsPoint', 'Counter > 50');
+            error('Polyhedron:containsPoint:counter', 'Too many attempts');
         end
 
         % determine ray
