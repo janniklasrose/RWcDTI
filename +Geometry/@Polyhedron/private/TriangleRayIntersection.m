@@ -49,11 +49,11 @@ end
 function [c] = crossFast2(a, b)
 % Fast cross product along dim=2
 
-useMex = false;
+useMex = exist('crossMex', 'file') == 3; % 3 = MEX file;
 if useMex % compiled MEX file
     c = crossMex(a, b);
-else % see function definition below
-    c = crossMat(a, b);
+else % fallback option
+    c = crossMat(a, b); % see function definition below
 end
 
 end
