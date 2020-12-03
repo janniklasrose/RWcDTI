@@ -1,6 +1,10 @@
 function setup_par(nCPUs)
 % initialises parallel pool if required
 
+% set a global variable for ParticleWalker.run_forloop
+global NUM_CORES
+NUM_CORES = nCPUs;
+
 if nCPUs > 1 && isempty(gcp('nocreate'))
     if nargin < 1
         nCPUs = feature('numcores');

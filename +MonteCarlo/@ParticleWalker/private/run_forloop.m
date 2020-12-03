@@ -45,6 +45,11 @@ end
 
 function [nWorkers] = active_workers()
 % get the number of workers from parpool (or none if no pool exists)
+%   always prints a message informing the user. this is to avoid unexpected behaviour,
+%   such as when the user forgot to start a parallel pool and should know about it.
+
+% load global variable (set by user or in setup_par)
+global NUM_CORES
 
 pool = gcp('nocreate'); % query
 if isempty(pool)
@@ -52,6 +57,7 @@ if isempty(pool)
     fprintf('No parallel pool exists, running loop in serial.\n');
 else % ~isempty(pool)
     nWorkers = pool.NumWorkers; % use existing pool
+    nWorkers = min(NUM_CORES, nWorkers); % limit cores
     fprintf('A parallel pool exists, running loop in parallel (NumWorkers = %i).\n', nWorkers);
 end
 
