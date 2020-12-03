@@ -6,4 +6,4 @@ The code is using MATLAB, but performance-critical functions have been written i
 
 ## Running a simulation
 
-To run a simulation, it is easiest to specify all parameters using a configuration file. Example configuration files are provided in the `config/` directory.
+To run a simulation, it is easiest to specify all parameters using a configuration file (using the [YAML](https://en.wikipedia.org/wiki/YAML) format). Example configuration files are provided in the `config/` directory.
