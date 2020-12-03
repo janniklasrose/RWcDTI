@@ -1,17 +1,26 @@
-function run_sim(config_file, output_file)
+function run_sim(output_file, varargin)
 % setup and run simulation using a configuration file
+%   run_sim(output, [config1, ...])
 
 % default arguments
 if nargin < 1
-    config_file = 'config.yml';
-end
-if nargin < 2
     output_file = 'output.mat';
 end
+if isempty(varargin)
+    varargin = {'config.yml'};
+end
+config_files = varargin;
 
 %% Load configuration
 
-config = yaml.ReadYaml(config_file);
+for i = 1:numel(config_files)
+    file = config_files{i};
+    if ~exist(file, 'file')
+        error('Config file "%s" not found', file);
+    end
+end
+configs = cellfun(@yaml.ReadYaml, config_files, 'UniformOutput', false);
+config = combine_structs(configs{:});
 
 %% Sequence
 
@@ -86,5 +95,37 @@ runtime = toc(clock);
 % save
 result = struct('data', data, 'runtime', runtime);
 save(output_file, '-struct', 'result', '-v7.3');
+
+end
+
+function [s_out] = combine_structs(varargin)
+
+% find fieldnames
+structures = varargin;
+N_structures = numel(structures);
+struct_fieldnames = cellfun(@(s) fieldnames(s)', structures, 'UniformOutput', false, 'ErrorHandler', @(err, varargin) '-');
+aint_struct = cellfun(@(s) isequal(s, '-'), struct_fieldnames);
+if any(aint_struct)
+    assert(all(aint_struct), 'field is both struct and value');
+    s_out = structures{end}; % take the last value
+    return
+end
+fields = unique([struct_fieldnames{:}]);
+
+% initialise empty output struct
+s_out = struct();
+
+for i = 1:numel(fields)
+    fieldname = fields{i};
+    field_values = cell(1, N_structures);
+    for j = 1:numel(structures)
+        s = structures{j};
+        if isfield(s, fieldname)
+            field_values{j} = s.(fieldname);
+        end
+    end
+    field_values = field_values(~cellfun(@isempty, field_values));
+    s_out.(fieldname) = combine_structs(field_values{:});
+end
 
 end
