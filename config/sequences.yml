@@ -10,29 +10,41 @@ sequences:
         Delta: 20.547
         epsilon: 0.676
         delta: 9.921
+        alpha90: 1
+        alphaRO: 1
       MCSE:
         Gmax: 39.478
         epsilon: 0.661
         delta1: 7.819
         delta2: 16.299
+        alpha90: 1
+        alphaRO: 1
       STEAM:
         Gmax: 35.690
         Delta: 1000
         epsilon: 0.595
         delta: 0.977
+        alpha90: 1
+        alphaRO: 1
     highG: # sequences with higher G=80
       PGSE:
         Gmax: 80
         Delta: 16.976
         epsilon: 1.333
         delta: 4.385
+        alpha90: 1
+        alphaRO: 1
       MCSE:
         Gmax: 80
         epsilon: 1.333
         delta1: 5.430
         delta2: 7.997
+        alpha90: 1
+        alphaRO: 1
       STEAM:
         Gmax: 80
         Delta: 1000
         epsilon: 0.667
         delta: 0.034
+        alpha90: 1
+        alphaRO: 1
