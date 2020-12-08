@@ -70,6 +70,7 @@ substrate.transit_model = config.substrate.membranes.transit_model;
 substrate.kappa = config.substrate.membranes.permeability;
 substrate.D_i = config.substrate.diffusivity.D_ics;
 substrate.D_e = config.substrate.diffusivity.D_ecs;
+substrate.stepType = config.substrate.stepType;
 
 %% Monte Carlo
 

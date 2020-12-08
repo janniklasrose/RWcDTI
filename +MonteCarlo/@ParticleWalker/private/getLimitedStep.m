@@ -1,22 +1,10 @@
-function [dxdydz] = getLimitedStep(dim, maxStepLength, rngstream)
+function [dxdydz] = getLimitedStep(dim, maxStepLength, varargin)
 % Return a Gaussian step with limited length
 % Output:
 %   dxdydz := [dx, dy, dz]
 
-% default for max step length
-if nargin < 2
-    maxStepLength = 5;
-end
-maxStep_squared = maxStepLength^2;
-
-% default for random number stream
-if nargin < 3
-    stream = {};
-else
-    stream = {rngstream};
-end
-
 % step in space
+maxStep_squared = maxStepLength^2; % pre-compute here
 dxdydz = zeros(1, dim);
 needUpdate = true();
 tries = 0;
@@ -29,9 +17,38 @@ while needUpdate
     end
 
     % update BEFORE checking new needUpdate (because of initialisation)
-    dxdydz = randn(stream{:}, 1, dim);
+    dxdydz = getStep(dim, varargin{:});
     needUpdate = sum(dxdydz.^2) > maxStep_squared;
 
+end
+
+end
+
+function [dxdydz] = getStep(dim, varargin)
+% Produce a random step
+%   getStep(dim, [stepType], [stream])
+
+% process optional arguments
+if length(varargin) < 1
+    stepType = 'constant';
+else
+    stepType = varargin{1};
+end
+if length(varargin) < 2
+    stream = {}; % default MATLAB
+else
+    stream = {varargin{2}};
+end
+
+switch stepType
+    case 'normal'
+        dxdydz = randn(stream{:}, 1, dim);
+    case 'constant'
+        choiceVector = [-1, +1]; % left or right
+        replacement = true;
+        dxdydz = randsample(stream{:}, choiceVector, dim, replacement);
+    otherwise
+        error('Error:NotImplemented', 'Step type not supported');
 end
 
 end

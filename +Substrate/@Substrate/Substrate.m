@@ -10,6 +10,7 @@ classdef Substrate < handle
     end
 
     properties
+        stepType = 'constant'
         transit_model = 'constant'
         kappa = 0
         D_e = 0

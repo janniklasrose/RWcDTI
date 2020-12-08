@@ -2,7 +2,7 @@ function [position] = one_dt(position, dt, stream, substrate)
 % Perform a single time step
 
 % get step length (dim=3 for 3D), max 5stdevs
-dxdydz_normaldistrib = getLimitedStep(3, 5, stream);
+dxdydz_normaldistrib = getLimitedStep(3, 5, substrate.stepType, stream);
 
 myoIndex = position(1, 4);
 
