@@ -68,6 +68,13 @@ while norm(dxdydz, 2) > ZERO
         switch substrate.transit_model
             case 'constant'
                 probability_of_transit = substrate.kappa; % is constant probability of transit
+            case 'Fieremans2010'
+                % Fieremans et al, 2010, NMR Biomed.
+                % Monte Carlo study of a two-compartment exchange model of diffusion
+                % DOI:10.1002/nbm.1577
+                ds = norm(dxdydz, 2)*intersectInfo.t; % distance to membrane
+                term = (2 * ds * substrate.kappa)/D_old;
+                probability_of_transit = term/(1+term);
             otherwise
                 error('Error:NotImplemented', 'Transit model not supported');
         end
