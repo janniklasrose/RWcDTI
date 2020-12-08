@@ -3,13 +3,12 @@
 
 mex('-setup', 'C')
 
-MAKE('+Geometry/@Polyhedron/', 'crossMex')
-MAKE('+Substrate/@Substrate/', 'needsChecking_box')
+MAKE('+Geometry/private/', 'crossMex')
+MAKE('+Substrate/@Substrate/private/', 'needsChecking_box')
 
 function [] = MAKE(folder, varargin)
 
-    source_path = fullfile(folder, 'private');
-    object_path = fullfile(folder, 'private');
+    [source_path, object_path] = deal(folder);
 
     for iArg = 1:numel(varargin)
         arg = varargin{iArg};

@@ -24,8 +24,8 @@ intersect = false(Nverts, 1); % by default there are no intersections
 edge1 = V2 - V1; % find vectors for two edges sharing V1
 edge2 = V3 - V1;
 tvec = orig - V1; % vector from V1 to ray origin
-pvec = crossFast2(dir, edge2);
-qvec = crossFast2(tvec, edge1);
+pvec = Geometry.crossFast2(dir, edge2);
+qvec = Geometry.crossFast2(tvec, edge1);
 det = sum(edge1.*pvec, 2); % determinant of the matrix M = dot(edge1, pvec)
 
 % find faces parallel to the ray
@@ -43,30 +43,5 @@ ok = (angleOK & u>=-zero & v>=-zero & u+v<=1.0+zero);
 
 % compute where along the line the intersection occurs
 intersect = (ok & t>=-zero & t<=1.0+zero); % between origin and destination
-
-end
-
-function [c] = crossFast2(a, b)
-% Fast cross product along dim=2
-
-useMex = exist('crossMex', 'file') == 3; % 3 = MEX file;
-if useMex % compiled MEX file
-    c = crossMex(a, b);
-else % fallback option
-    c = crossMat(a, b); % see function definition below
-end
-
-end
-
-function [c] = crossMat(a, b)
-% Cross product without overhead
-%
-% Inputs:
-%   a = [Nx3]
-%   b = [Nx3]
-
-c = [a(:, 2).*b(:, 3) - a(:, 3).*b(:, 2), ...
-     a(:, 3).*b(:, 1) - a(:, 1).*b(:, 3), ...
-     a(:, 1).*b(:, 2) - a(:, 2).*b(:, 1)];
 
 end
