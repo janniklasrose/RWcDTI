@@ -24,15 +24,21 @@ config = combine_structs(configs{:});
 
 %% Sequence
 
-seq_type = config.sequence.type;
-if isfield(config.sequence, seq_type)
-    seq_data = config.sequence.(seq_type);
+if isfield(config.sequence, 'type')
+    seq_type = config.sequence.type;
+    if isfield(config.sequence, seq_type)
+        seq_data = config.sequence.(seq_type);
+    else
+        seq_data = struct();
+    end
+    seq_Nt = config.sequence.N_t;
+    seq_dtmax = cell2mat(config.sequence.dt_max); % one or two
+    sequence = MRI.make_sequence(seq_Nt, seq_dtmax, seq_type, seq_data);
 else
-    seq_data = struct();
+    % read dt & gG from file, construct sequence directly
+    seq = config.sequence.data;
+    sequence = MRI.ScanSequence(cell2mat(seq.dt), cell2mat(seq.gG));
 end
-seq_Nt = config.sequence.N_t;
-seq_dtmax = cell2mat(config.sequence.dt_max); % one or two
-sequence = MRI.make_sequence(seq_Nt, seq_dtmax, seq_type, seq_data);
 
 %% Substrate
 
