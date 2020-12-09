@@ -49,13 +49,13 @@ classdef Substrate < handle
                     parse(p, varargin{:});
 
                     obj.transform = Substrate.Transform;
+                    obj.transform.isIdentity = false; % disable identity
                     obj.transform.dxdydz_bb = dxdydz;
                     obj.transform.y_slice_minmax = p.Results.y_slice_minmax;
                     obj.transform.deg_rot_per_L_in_y = p.Results.deg_rot_per_L_in_y;
 
                 case 'full'
-                    error('Error:NotImplemented', 'Full geometry not supported');
-                    %TODO: ensure .transform is an identity transform!!
+                    obj.transform = Substrate.Transform; % identity transform by default
             end
 
             obj.buildCache(); % requires .dxdydz and .myocytes to be set

@@ -61,7 +61,7 @@ for n = 1:sequence.NT
                      }
                     continue; % Try again
                 case {...
-                      'Transform:transformPosition:where', ... % got lost, flag it!
+                      'Transform:global2local:where', ... % got lost, flag it!
                       'Substrate:intersectMyocytes:duplicate' ... % odd, flag it!
                       'Polyhedron:intersection:duplicate', ... % odd, flag it!
                       'ParticleWalker:one_dt:bb_inconsistent', ... % odd, flag it!
