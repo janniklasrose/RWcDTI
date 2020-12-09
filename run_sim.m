@@ -42,7 +42,10 @@ if isfield(config.substrate.geometry.myocytes, 'file')
     myocytes = myocytes.myocytes;
 else
     % load .Vertices & .Faces directly from config file
-    error('Error:NotImplemented', 'Loading polyhedra from config not supported');
+    % need to convert the nested cells from YAML to arrays
+    myocytes = cellfun(@(s) struct('Vertices', cell2mat(s.Vertices), ...
+                                    'Faces', cell2mat(s.Faces)), ...
+                        config.substrate.geometry.myocytes.data);
 end
 
 % load other geometry parameters

@@ -21,13 +21,7 @@ sequence:
 substrate:
   geometry:
     myocytes:
-        file: myocytes.mat # load from file
-        #vertices:
-        #   - []
-        #   - []
-        #faces:
-        #   - []
-        #   - []
+      file: myocytes.mat # load from file
     LxLyLz:
       - 500 # block.Lx
       - 500 # block.Ly
