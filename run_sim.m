@@ -85,12 +85,27 @@ substrate.stepType = config.substrate.stepType;
 
 % seed
 Np = config.montecarlo.N_p;
-seed = config.montecarlo.seed;
-walker = MonteCarlo.ParticleWalker(Np, seed); % create system of N_P particles
-T = sum(sequence.dt); % total simulation time
-buffer = [-1, +1, -1, +1, -1, +1]*sqrt(6 * substrate.D_e * T);
-seedbox = voxel + buffer; % with buffer
-walker.seedParticlesInBox(seedbox.'); % [min; max]-pairs (using min==max results in point seed)
+rngseed = config.montecarlo.rngseed;
+walker = MonteCarlo.ParticleWalker(Np, rngseed); % create system of N_P particles
+seeding = config.montecarlo.seedbox; % use alias in case it's char
+if ischar(seeding)
+    if startsWith(seeding, 'voxel')
+        seedbox = voxel;
+    elseif startsWith(seeding, 'origin')
+        seedbox = zeros(1, 6);
+    else
+        error('Unknown seedbox option')
+    end
+    if endsWith(seeding, '+buffer')
+        T = sum(sequence.dt); % total simulation time
+        buffer = [-1, +1, -1, +1, -1, +1]*sqrt(6 * substrate.D_e * T);
+        seedbox = seedbox + buffer;
+    end
+else % assume numeric value
+    seedbox = cell2mat(seeding);
+end
+seedbox = seedbox.'; % [min; max]-pairs (using min==max results in point seed)
+walker.seedParticlesInBox(seedbox);
 
 % set up the parallel
 MonteCarlo.setup_par(config.montecarlo.num_cores);

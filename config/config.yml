@@ -7,7 +7,9 @@
 
 montecarlo:
   N_p: 10 # number of walkers
-  seed: 0 # random seed
+  rngseed: 0 # random seed
+  seedbox: 'voxel+buffer' # 'voxel', 'voxel+buffer'
+  #seedbox: [0, 1, 0, 0, 0, 3] # [xmin,xmax,ymin,ymax,zmin,zmax] (can be singular)
   num_cores: 1 # number of cores
 
 sequence:
