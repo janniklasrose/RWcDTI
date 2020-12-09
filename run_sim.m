@@ -59,12 +59,12 @@ LxLyLz = cell2mat(config.substrate.geometry.LxLyLz);
 
 % set the transform according to the configuration
 if isfield(config.substrate.geometry, 'transform')
-    rot = config.substrate.geometry.transform.deg_rot_per_L_in_y;
     y_extent = cell2mat(config.substrate.geometry.transform.y_extent);
     Ly = LxLyLz(2);
     y_minvals = unique([0:+Ly:y_extent(2), 0:-Ly:y_extent(1)]); % realistic y_slice
     y_slice_minmax = [y_minvals(1:end-1); y_minvals(2:end)]; % use shifted indexing to avoid rounding error
-    transform = {'block', y_slice_minmax, 'deg_rot_per_L_in_y', rot};
+    transform_config = rmfield(config.substrate.geometry.transform, 'y_extent');
+    transform = {'block', y_slice_minmax, transform_config};
 else
     transform = {'full'};
 end

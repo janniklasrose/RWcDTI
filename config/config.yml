@@ -1,49 +1,5 @@
-# Configuration file
-# units:
-#   [L] = um     - 1e-6
-#   [T] = ms     - 1e-3
-#   [D] = um2/ms - 1e-9
-#   [P] = um/ms  - 1e-3
-
-montecarlo:
-  N_p: 10 # number of walkers
-  rngseed: 0 # random seed
-  seedbox: 'voxel+buffer' # 'voxel', 'voxel+buffer'
-  #seedbox: [0, 1, 0, 0, 0, 3] # [xmin,xmax,ymin,ymax,zmin,zmax] (can be singular)
-  num_cores: 1 # number of cores
-  stepType: 'constant'
-
-sequence:
-  type: dummy #TODO: replace with real sequence name and add data from sequence.yml
-  N_t: 100
-  dt_max:
-    - 1 # only one value in case of dummy
-    #- 1.0 # during gradient-off (free)
-    #- 0.1 # during gradient-on
-
-substrate:
-  geometry:
-    LxLyLz:
-      - 500 # block.Lx
-      - 500 # block.Ly
-      - 100 # block.Lz
-    transform:
-      deg_rot_per_L_in_y: 10 # degree of rotation per unit length in y
-      y_extent:
-        - -2000 # yextent.min
-        - +5000 # yextent.max
-  domain:
-    voxel:
-      - 0    # voxel.xmin
-      - 2800 # voxel.xmax
-      - 0    # voxel.ymin
-      - 2800 # voxel.ymax
-      - 0    # voxel.zmin
-      - 8000 # voxel.zmax
-    #boundary: reflect, periodic, ...
-  membranes:
-    transit_model: constant # type of model
-    permeability: 0 # membrane permeability
-  diffusivity:
-    D_ics: 1 # intra-cellular diffusivity
-    D_ecs: 1 # extra-cellular diffusivity
+units:
+  length: 1e-6 # [L] = um
+  time: 1e-3 # [T] = ms
+  diffusivity: 1e-9 # [D] = um2/ms (derived)
+  permeability: 1e-3 # [P] = um/ms (derived)

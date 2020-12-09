@@ -38,23 +38,25 @@ classdef Substrate < handle
                 obj.myocytes = myocytes;
             end
 
-            obj.type = type;
             validatestring(type, {'block', 'full'});
-            switch type
-                case 'block'
-                    p = inputParser;
-                    addRequired(p, 'y_slice_minmax');
-                    addParameter(p, 'deg_rot_per_L_in_y', 0);
-                    parse(p, varargin{:});
-
-                    obj.transform = Substrate.Transform;
-                    obj.transform.isIdentity = false; % disable identity
-                    obj.transform.dxdydz_bb = dxdydz;
-                    obj.transform.y_slice_minmax = p.Results.y_slice_minmax;
-                    obj.transform.deg_rot_per_L_in_y = p.Results.deg_rot_per_L_in_y;
-
-                case 'full'
-                    obj.transform = Substrate.Transform; % identity transform by default
+            obj.type = type;
+            obj.transform = Substrate.Transform; % identity transform by default
+            if strcmp(type, 'block')
+                obj.transform.isIdentity = false; % disable identity
+                obj.transform.dxdydz_bb = dxdydz;
+                % parse the inputs
+                p = inputParser;
+                addRequired(p, 'y_slice_minmax');
+                p.KeepUnmatched = true; % pass other arguments as struct
+                parse(p, varargin{:});
+                obj.transform.y_slice_minmax = p.Results.y_slice_minmax;
+                params = fieldnames(p.Unmatched);
+                for i = 1:numel(params)
+                    name = params{i};
+                    try %#ok<TRYNC> % no need to catch, we will simply try
+                        obj.transform.(name) = p.Unmatched.(name);
+                    end
+                end
             end
 
             obj.buildCache(); % requires .dxdydz and .myocytes to be set

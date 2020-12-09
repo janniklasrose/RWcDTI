@@ -1,0 +1,36 @@
+substrate:
+  geometry: # definition of the substrate geometry
+
+    # specify the transform in case the block is duplicated
+    transform:
+      y_extent:
+        - -2000 # yextent.min
+        - +5000 # yextent.max
+      deg_rot_per_L_in_y: 10 # degree of rotation per unit length in y
+      z_amplitude: 0.1 # amplitude in z for the sinusoidal transform
+      x_frequency: 2 # frequency in x for the sinusoidal transform
+
+  domain: # the simulation domain
+
+    # imaging voxel
+    voxel:
+      - 0    # voxel.xmin
+      - 2800 # voxel.xmax
+      - 0    # voxel.ymin
+      - 2800 # voxel.ymax
+      - 0    # voxel.zmin
+      - 8000 # voxel.zmax
+
+    #TODO: implement domain boundary condition
+    #boundary: reflect
+    #boundary: periodic
+
+  # transit model and permeability for the membranes
+  membranes:
+    transit_model: constant # type of model
+    permeability: 0 # membrane permeability
+
+  # compartment specific diffusivity
+  diffusivity:
+    D_ics: 1 # intra-cellular diffusivity
+    D_ecs: 1 # extra-cellular diffusivity

@@ -3,10 +3,10 @@ classdef Transform
     properties
         isIdentity = true
         dxdydz_bb(1, 3)
-        deg_rot_per_L_in_y = 0
         y_slice_minmax
-        z_amplitude = 0.1
-        x_frequency = 2
+        deg_rot_per_L_in_y = 0
+        z_amplitude = 0
+        x_frequency = 1
     end
 
     methods

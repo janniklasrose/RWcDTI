@@ -1,0 +1,16 @@
+sequence:
+
+  # pulse sequence type name
+  # all names (except 'dummy') are searched in the config file for their specification
+  type: dummy # dummy sequence builds N_t times dt_max(1)
+  #type: PGSE
+  #PGSE:
+  # ... # this would contain the parameters for the sequence PGSE
+
+  # number of time steps
+  N_t: 100
+
+  # time step limit [dt_free, dt_grad]
+  dt_max:
+    - 1.0 # during gradient-off (free)
+    - 0.1 # during gradient-on
