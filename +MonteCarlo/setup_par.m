@@ -3,9 +3,9 @@ function setup_par(nCPUs)
 
 % set a global variable for ParticleWalker.run_forloop
 global NUM_CORES
-NUM_CORES = nCPUs;
 
 if nCPUs > 1 && isempty(gcp('nocreate')) % throws if no pool support but only if nCPUS>1
+    NUM_CORES = nCPUs;
     if nargin < 1
         nCPUs = feature('numcores');
     end

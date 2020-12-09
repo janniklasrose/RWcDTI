@@ -1,4 +1,4 @@
-function [pos_i, phi_i, flag_i] = one_walker(i, pos_all, phi_all, flag_all, rng_seed, sequence, substrate)
+function [pos_i, phi_i, flag_i] = one_walker(i, pos_all, phi_all, flag_all, config, sequence, substrate)
 % core function to be executed for each walker
 %   receives index of walker and global data to pick its own (and return that only)
 
@@ -10,7 +10,7 @@ pos_i(1, 4) = inf; % we store final index in the 4th dimension. init here in cas
 
 % init randomness
 num_streams = size(pos_all, 1); % as many as there are walkers
-stream = RandStream.create('mlfg6331_64', 'Seed', rng_seed, ...
+stream = RandStream.create('mlfg6331_64', 'Seed', config.rng_seed, ...
                            'NumStreams', num_streams, 'StreamIndices', i);
 % this stream has 2^51=2e15 substreams
 
@@ -51,7 +51,7 @@ for n = 1:sequence.NT
         % execute one dt step
         try
             % perform one random step (new call = new random step)
-            [pos_i] = one_dt(pos_i, dt, stream, substrate);
+            [pos_i] = one_dt(pos_i, dt, stream, substrate, config.stepType);
             step_success = true; % no error thrown, that's it!
         catch exception
             switch exception.identifier

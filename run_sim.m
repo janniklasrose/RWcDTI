@@ -79,7 +79,6 @@ substrate.transit_model = config.substrate.membranes.transit_model;
 substrate.kappa = config.substrate.membranes.permeability;
 substrate.D_i = config.substrate.diffusivity.D_ics;
 substrate.D_e = config.substrate.diffusivity.D_ecs;
-substrate.stepType = config.substrate.stepType;
 
 %% Monte Carlo
 
@@ -109,6 +108,11 @@ walker.seedParticlesInBox(seedbox);
 
 % set up the parallel
 MonteCarlo.setup_par(config.montecarlo.num_cores);
+
+% optionally, configure the step type
+if isfield(config.montecarlo, 'stepType')
+    walker.stepType = config.montecarlo.stepType;
+end
 
 % execute
 clock = tic(); % start timer

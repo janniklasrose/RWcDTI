@@ -11,6 +11,7 @@ montecarlo:
   seedbox: 'voxel+buffer' # 'voxel', 'voxel+buffer'
   #seedbox: [0, 1, 0, 0, 0, 3] # [xmin,xmax,ymin,ymax,zmin,zmax] (can be singular)
   num_cores: 1 # number of cores
+  stepType: 'constant'
 
 sequence:
   type: dummy #TODO: replace with real sequence name and add data from sequence.yml
@@ -22,8 +23,6 @@ sequence:
 
 substrate:
   geometry:
-    myocytes:
-      file: myocytes.mat # load from file
     LxLyLz:
       - 500 # block.Lx
       - 500 # block.Ly

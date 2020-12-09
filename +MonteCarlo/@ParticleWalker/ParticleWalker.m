@@ -14,6 +14,10 @@ classdef ParticleWalker < handle
         rng_seed; % seed to (all) RNGs
     end
 
+    properties
+        stepType = 'constant';
+    end
+
     methods(Access=public)
         function [obj] = ParticleWalker(N_p, seed)
 

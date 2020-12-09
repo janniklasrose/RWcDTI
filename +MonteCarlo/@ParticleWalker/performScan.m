@@ -5,8 +5,9 @@ function [data] = performScan(obj, sequence, substrate)
 pos0 = obj.position;
 
 % loop over all particles (all independent, thus parallel)
+config = struct('rng_seed', obj.rng_seed, 'stepType', obj.stepType);
 [obj.position, obj.phase, obj.flag] = run_forloop(obj.N_p, @one_walker, ...
-    obj.position, obj.phase, obj.flag, obj.rng_seed, sequence, substrate);
+    obj.position, obj.phase, obj.flag, config, sequence, substrate);
 
 % check for particles that were flagged
 valid = cellfun(@isempty, obj.flag);

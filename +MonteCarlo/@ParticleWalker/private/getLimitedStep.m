@@ -45,7 +45,7 @@ switch stepType
         dxdydz = randn(stream{:}, 1, dim);
     case 'constant'
         choiceVector = [-1, +1]; % left or right
-        dxdydz = choiceVector(randi(stream{:}, numel(choiceVector), dim));
+        dxdydz = choiceVector(randi(stream{:}, numel(choiceVector), [1, dim]));
     otherwise
         error('Error:NotImplemented', 'Step type not supported');
 end
