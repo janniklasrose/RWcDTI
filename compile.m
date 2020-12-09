@@ -1,24 +1,40 @@
-%>> setenv('MW_MINGW64_LOC', 'C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64')
-% http://uk.mathworks.com/help/matlab/matlab_external/upgrading-mex-files-to-use-64-bit-api.html
+function [] = compile(force, setup)
+% compile the MEX files
 
-mex('-setup', 'C')
+% handle arguments
+if nargin < 1
+    force = false; % by default don't compile if files exist
+end
+if nargin < 2
+    setup = false; % assume the user has configured MEX
+end
+validateattributes(force, {'numeric', 'logical'}, {'binary'});
+validateattributes(setup, {'numeric', 'logical'}, {'binary'});
 
-MAKE('+Geometry/private/', 'crossMex')
-MAKE('+Substrate/@Substrate/private/', 'needsChecking_box')
+if setup
+    mex('-setup', 'C');
+end
 
-function [] = MAKE(folder, varargin)
+make(force, '+Geometry/private/', 'crossMex')
+make(force, '+Substrate/@Substrate/private/', 'needsChecking_box')
 
-    [source_path, object_path] = deal(folder);
+end
 
-    for iArg = 1:numel(varargin)
-        arg = varargin{iArg};
-        source_files = {fullfile(source_path, [arg,'.c'])};
-        binary_name = arg;
-        try
-            mex('-outdir', object_path, '-output', binary_name, source_files{:});
-        catch E
-            warning('MAKE:CompileError', 'The following compile error occured:\n%s\n', E.getReport);
-        end
+function [] = make(force, folder, varargin)
+
+for iArg = 1:numel(varargin)
+    binary_name = varargin{iArg};
+    source_file = fullfile(folder, [binary_name,'.c']);
+    target_file = fullfile(folder, [binary_name,'.',mexext]);
+    if exist(target_file, 'file') && ~force
+        continue
     end
+    try
+        mex('-outdir', folder, '-output', binary_name, source_file);
+    catch E
+        warning('compile:make:CompileError', ...
+                'The following compile error occured:\n%s\n', E.getReport);
+    end
+end
 
 end
