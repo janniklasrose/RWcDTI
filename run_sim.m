@@ -33,7 +33,7 @@ if isfield(config.sequence, 'type')
     end
     seq_Nt = config.sequence.N_t;
     seq_dtmax = cell2mat(config.sequence.dt_max); % one or two
-    sequence = MRI.make_sequence(seq_Nt, seq_dtmax, seq_type, seq_data);
+    sequence = MRI.ScanSequence.create(seq_Nt, seq_dtmax, seq_type, seq_data);
 else
     % read dt & gG from file, construct sequence directly
     seq = config.sequence.data;

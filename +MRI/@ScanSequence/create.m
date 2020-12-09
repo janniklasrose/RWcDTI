@@ -1,4 +1,4 @@
-function [sequence] = make_sequence(NT, dt_max, SeqName, varargin)
+function [sequence] = create(NT, dt_max, SeqName, varargin)
 % make a sequence object from the given parameters
 %   NT : number of time steps (target)
 %   dt_max : maximum time step

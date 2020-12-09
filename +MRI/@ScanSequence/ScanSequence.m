@@ -30,4 +30,8 @@ classdef ScanSequence
         end
     end
 
+    methods(Static)
+        [sequence] = create(NT, dt_max, SeqName, varargin)
+    end
+
 end
