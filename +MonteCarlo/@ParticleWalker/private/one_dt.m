@@ -11,10 +11,10 @@ myoIndex = position(1, 4);
 if isnan(myoIndex) % none
     D_old = substrate.D_e;
 else
-    D_old = substrate.D_i; %TODO: assign based on individual myocyte with index iM
+    D_old = substrate.D_i;
 end
 D_new = D_old; % D_new holds the new diffusivity for every sub-step
-dxdydz = dxdydz_normaldistrib * sqrt(2*dt*D_old); % currently only D_i and D_e
+dxdydz = dxdydz_normaldistrib * sqrt(2*dt*D_old);
 
 % until no more step left
 ZERO = 1e-12; % 1e-12[m] = 1e-6[um] (note: eps(1) == 2e-16)
@@ -80,7 +80,8 @@ while norm(dxdydz, 2) > ZERO
         end
 
         U = rand(stream, 1);
-        if U < probability_of_transit % ??? ensure boundary cases (rand==0 or rand==1 are handled correctly)
+        if U < probability_of_transit
+            %TODO: ensure boundary cases (rand==0 or rand==1) are handled correctly
             % --> go through
 
             % update index %TODO: ensure this is done correctly!!!
@@ -94,7 +95,7 @@ while norm(dxdydz, 2) > ZERO
             if isnan(myoIndex) % none
                 D_new = substrate.D_e;
             else
-                D_new = substrate.D_i; %TODO: assign based on individual myocyte with index iM
+                D_new = substrate.D_i;
             end
 
             dxdydz = dxdydz * sqrt(D_new/D_old);

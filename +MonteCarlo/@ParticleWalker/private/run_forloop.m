@@ -51,7 +51,15 @@ function [nWorkers] = active_workers()
 % load global variable (set by user or in setup_par)
 global NUM_CORES
 
-pool = gcp('nocreate'); % query
+try
+    pool = gcp('nocreate'); % query
+catch exception
+    % problem with pool, most likely no parallel license
+    if strcmp(exception.identifier, 'MATLAB:UndefinedFunction')
+        fprintf('Parallel features seem to be unavailable.\n');
+    end
+    pool = [];
+end
 if isempty(pool)
     nWorkers = []; % will cause reverse-order serial execution of parfor loop
     fprintf('No parallel pool exists, running loop in serial.\n');

@@ -5,7 +5,7 @@ function setup_par(nCPUs)
 global NUM_CORES
 NUM_CORES = nCPUs;
 
-if nCPUs > 1 && isempty(gcp('nocreate'))
+if nCPUs > 1 && isempty(gcp('nocreate')) % throws if no pool support but only if nCPUS>1
     if nargin < 1
         nCPUs = feature('numcores');
     end
@@ -14,7 +14,7 @@ if nCPUs > 1 && isempty(gcp('nocreate'))
     mycluster.NumThreads = 1; % maybe 2 for hyperthreading?
     [~, hostname] = system('hostname'); hostname = strtrim(hostname);
     mkdir('cluster', hostname);
-    mycluster.JobStorageLocation = fullfile(pwd, 'cluster', hostname); % pwd for absolute path
+    mycluster.JobStorageLocation = fullfile(pwd, 'cluster', hostname); % absolute path
     distcomp.feature('LocalUseMpiexec', true);
     parpool(mycluster, nCPUs, 'IdleTimeout', inf);
 end

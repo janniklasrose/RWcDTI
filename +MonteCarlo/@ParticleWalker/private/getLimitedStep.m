@@ -37,7 +37,7 @@ end
 if length(varargin) < 2
     stream = {}; % default MATLAB
 else
-    stream = {varargin{2}};
+    stream = varargin(2); % get cell, not content
 end
 
 switch stepType
@@ -45,8 +45,7 @@ switch stepType
         dxdydz = randn(stream{:}, 1, dim);
     case 'constant'
         choiceVector = [-1, +1]; % left or right
-        replacement = true;
-        dxdydz = randsample(stream{:}, choiceVector, dim, replacement);
+        dxdydz = choiceVector(randi(stream{:}, numel(choiceVector), dim));
     otherwise
         error('Error:NotImplemented', 'Step type not supported');
 end
