@@ -124,18 +124,26 @@ end
 function distance = computeNormalDistance(faceVertices, step)
 % Find the projected distance in the normal direction to the plane
 
+% get the face normal
 V1 = faceVertices(1, :);
 V2 = faceVertices(2, :);
 V3 = faceVertices(3, :);
 edge01 = V2 - V1;
 edge02 = V3 - V1;
 normal = Geometry.crossFast2(edge01, edge02);
+
+% compute the dot product using normalised vectors
 normal = normal/norm(normal, 2);
 step_normalized = step/norm(step, 2);
-angle_between_vectors = acos(dot(step_normalized, normal));
-if angle_between_vectors >= pi/2
-    angle_between_vectors = pi - angle_between_vectors;
-end
-distance = norm(step,2)*cos(angle_between_vectors);
+dotproduct = dot(step_normalized, normal);
+
+% determine the distance
+%{
+theta = acos(dotproduct);
+if theta >= pi/2, theta = pi - theta; end
+t = cos(theta);
+%}
+t = abs(dotproduct); % this is the equivalent of the commented code above
+distance = norm(step,2)*t;
 
 end
