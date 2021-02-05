@@ -1,5 +1,9 @@
 function setup_par(nCPUs)
 % initialises parallel pool if required
+%
+% On some systems, parpool initialisation may fail. MathWorks recommends setting:
+% >> distcomp.feature('LocalUseMpiexec', false);
+% either on-demand or in the user's startup.m file.
 
 % set a global variable for ParticleWalker.run_forloop
 global NUM_CORES
@@ -15,7 +19,6 @@ if nCPUs > 1 && isempty(gcp('nocreate')) % throws if no pool support but only if
     [~, hostname] = system('hostname'); hostname = strtrim(hostname);
     mkdir('cluster', hostname);
     mycluster.JobStorageLocation = fullfile(pwd, 'cluster', hostname); % absolute path
-    distcomp.feature('LocalUseMpiexec', true);
     parpool(mycluster, nCPUs, 'IdleTimeout', inf);
 end
 
