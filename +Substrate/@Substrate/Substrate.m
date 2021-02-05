@@ -14,6 +14,7 @@ classdef Substrate < handle
         kappa = 0
         D_e = 0
         D_i = 0
+        dim = 'xyz'
     end
 
     properties(Access=private)
