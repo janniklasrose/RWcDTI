@@ -1,4 +1,4 @@
-# Random Walk
+# Random Walk for cardiac Diffusion Tensor Imaging
 
 ## Compiling
 
