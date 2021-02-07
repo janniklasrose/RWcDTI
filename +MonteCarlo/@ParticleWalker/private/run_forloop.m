@@ -65,7 +65,9 @@ if isempty(pool)
     fprintf('No parallel pool exists, running loop in serial.\n');
 else % ~isempty(pool)
     nWorkers = pool.NumWorkers; % use existing pool
-    nWorkers = min(NUM_CORES, nWorkers); % limit cores
+    if ~isempty(NUM_CORES)
+        nWorkers = min(NUM_CORES, nWorkers); % limit cores
+    end
     fprintf('A parallel pool exists, running loop in parallel (NumWorkers = %i).\n', nWorkers);
 end
 
