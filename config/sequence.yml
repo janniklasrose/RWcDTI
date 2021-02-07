@@ -7,6 +7,8 @@ sequence:
   #PGSE:
   # ... # this would contain the parameters for the sequence PGSE
 
+  gamma: 267.5e-6  # rad/ms/mT
+
   # number of time steps
   N_t: 100
 

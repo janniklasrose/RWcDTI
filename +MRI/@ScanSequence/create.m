@@ -9,8 +9,8 @@ function [sequence] = create(NT, dt_max, SeqName, varargin)
 
 switch upper(SeqName)
     case {'PGSE', 'STEAM'} % follow the same rules
-        [Gmax, alpha90, alphaRO, epsilon, Delta, delta] = parse(varargin, ...
-            {'Gmax', 'alpha90', 'alphaRO', 'epsilon', 'Delta', 'delta'});
+        [Gmax, alpha90, alphaRO, epsilon, Delta, delta, gamma] = parse(varargin, ...
+            {'Gmax', 'alpha90', 'alphaRO', 'epsilon', 'Delta', 'delta', 'gamma'});
         durations = [alpha90, ...
                      epsilon, delta, epsilon, ...
                      Delta-(2*epsilon+delta), ...
@@ -19,8 +19,8 @@ switch upper(SeqName)
         ids = [0, 1, 2, 3, 0, -1, -2, -3, 0];
         [dt, gG] = discretize(durations, ids, NT, dt_max, Gmax);
     case {'MCSE', 'M2SE'} % these two names are synonyms
-        [Gmax, alpha90, alphaRO, epsilon, delta1, delta2] = parse(varargin, ...
-            {'Gmax', 'alpha90', 'alphaRO', 'epsilon', 'delta1', 'delta2'});
+        [Gmax, alpha90, alphaRO, epsilon, delta1, delta2, gamma] = parse(varargin, ...
+            {'Gmax', 'alpha90', 'alphaRO', 'epsilon', 'delta1', 'delta2', 'gamma'});
         del1 = delta1+2*epsilon;
         del2 = delta2+2*epsilon;
         Delta = (del2*(-2*del1+epsilon) + del1*epsilon)/(del1-del2);
@@ -32,9 +32,12 @@ switch upper(SeqName)
         ids = [0, -1, -2, -3, 1, 2, 3, 0, -1, -2, -3, 1, 2, 3, 0];
         [dt, gG] = discretize(durations, ids, NT, dt_max, Gmax);
     otherwise % dummy sequence
+        gamma = 1;
         dt = ones(1, NT)*dt_max(1);
         gG = zeros(1, NT);
 end
+
+gG = gG*gamma; % apply gamma
 
 sequence = MRI.ScanSequence(dt, gG);
 
