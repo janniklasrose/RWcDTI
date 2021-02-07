@@ -75,9 +75,7 @@ function [bar] = parforbar_new(N)
 % attempt to create a new parfor progress bar
 
 try
-    mfilepath = fileparts(which(mfilename()));
-    addpath(fullfile(mfilepath, 'ParforProgressbar'));
-    bar = ParforProgressbar(N);
+    bar = ParforProgressbar(N); % see /external/ParforProgMon
 catch
     bar = [];
 end
