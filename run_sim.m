@@ -28,6 +28,7 @@ if isfield(config.sequence, 'type')
     seq_type = config.sequence.type;
     if isfield(config.sequence, seq_type)
         seq_data = config.sequence.(seq_type);
+        seq_data.gamma = config.sequence.gamma;
     else
         seq_data = struct();
     end
