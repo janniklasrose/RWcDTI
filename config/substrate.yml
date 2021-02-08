@@ -34,3 +34,5 @@ substrate:
   diffusivity:
     D_ics: 1 # intra-cellular diffusivity
     D_ecs: 1 # extra-cellular diffusivity
+
+  dimension: 'xyz'
