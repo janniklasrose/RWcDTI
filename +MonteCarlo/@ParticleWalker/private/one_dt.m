@@ -50,7 +50,9 @@ while norm(dxdydz, 2) > ZERO
             dxdydz = dxdydz*(1-intersectInfoBB.t); % what's remaining
 
             % ENABLE if the particles cannot leave the bounding box
-            %dxdydz(:) = Geometry.reflect(dxdydz, intersectInfoBB.vertices);
+            if strcmp(substrate.boundary, 'reflect')
+                dxdydz(:) = Geometry.reflect(dxdydz, intersectInfoBB.vertices);
+            end
 
             position_rotated = position_rotated + dxdydz_toIntersection;
             position_rotated = position_rotated + dxdydz*stepEps;
