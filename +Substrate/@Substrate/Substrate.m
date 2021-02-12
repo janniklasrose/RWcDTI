@@ -22,6 +22,10 @@ classdef Substrate < handle
         transform
     end
 
+    properties(SetAccess=immutable, GetAccess=public)
+        boundary
+    end
+
     methods
         function obj = Substrate(dxdydz, myocytes, type, varargin)
 
@@ -42,7 +46,9 @@ classdef Substrate < handle
             validatestring(type, {'block', 'full'});
             obj.type = type;
             obj.transform = Substrate.Transform; % identity transform by default
+            obj.boundary = 'reflect';
             if strcmp(type, 'block')
+                obj.boundary = 'periodic';
                 obj.transform.isIdentity = false; % disable identity
                 obj.transform.dxdydz_bb = dxdydz;
                 % parse the inputs
