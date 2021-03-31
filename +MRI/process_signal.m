@@ -32,10 +32,10 @@ signal_ratio = zeros(ndirs, 1);
 for i = 1:ndirs
     dir = directions(i, :); % [Gx, Gy, Gz]
     % b-matrix (b_xx, b_yy, b_zz, b_xy, b_xz, b_yz)
-    b_matrix(i, :) = [dir([1, 2, 3]).^2, dir([1, 1, 2]).*dir([2, 3, 3])] * bvalue;
+    b_matrix(i, :) = [dir([1, 2, 3]).^2, 2*dir([1, 1, 2]).*dir([2, 3, 3])] * bvalue;
     % attenuation vector
     phi = sum(dir .* phase, 2); % combine components
-    signal_ratio(i) = abs(mean(exp(-1i*phi), 1)); %TODO: abs(mean(_)) vs mean(abs(_)) ?
+    signal_ratio(i) = abs(mean(exp(-1i*phi), 1));
 end
 
 % least squares solution
