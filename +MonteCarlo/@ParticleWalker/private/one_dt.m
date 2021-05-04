@@ -74,7 +74,7 @@ while norm(dxdydz, 2) > ZERO
                 % Fieremans et al, 2010, NMR Biomed.
                 % Monte Carlo study of a two-compartment exchange model of diffusion
                 % DOI:10.1002/nbm.1577
-                ds = norm(dxdydz, 2)*intersectInfo.t; % distance to membrane
+                ds = computeNormalDistance(intersectInfo.vertices, dxdydz_toIntersection);
                 term = (2 * ds * substrate.kappa)/D_old;
                 probability_of_transit = term/(1+term);
             otherwise
@@ -121,5 +121,32 @@ while norm(dxdydz, 2) > ZERO
     position(1, 4) = myoIndex;
 
 end
+
+end
+
+function distance = computeNormalDistance(faceVertices, step)
+% Find the projected distance in the normal direction to the plane
+
+% get the face normal
+V1 = faceVertices(1, :);
+V2 = faceVertices(2, :);
+V3 = faceVertices(3, :);
+edge01 = V2 - V1;
+edge02 = V3 - V1;
+normal = Geometry.crossFast2(edge01, edge02);
+
+% compute the dot product using normalised vectors
+normal = normal/norm(normal, 2);
+step_normalized = step/norm(step, 2);
+dotproduct = dot(step_normalized, normal);
+
+% determine the distance
+%{
+theta = acos(dotproduct);
+if theta >= pi/2, theta = pi - theta; end
+t = cos(theta);
+%}
+t = abs(dotproduct); % this is the equivalent of the commented code above
+distance = norm(step,2)*t;
 
 end
