@@ -1,11 +1,14 @@
-function [position_LOCAL, position_rotated, fn_RotReverse] = global2local(obj, position)
+function [position_LOCAL, fn_TransformInverse, fn_Rot, fn_RotReverse] = global2local(obj, position)
 % transform position from global to local
 
 % handle identity case first
 if obj.isIdentity
     % skip transform
-    [position_LOCAL, position_rotated] = deal(position);
-    fn_RotReverse = @(pos) pos;
+    A = 0;
+    fn_Rot = @(pos) rotate_y(pos, -A);
+    fn_RotReverse = fn_Rot;
+    position_LOCAL = position;
+    fn_TransformInverse = @(pos) pos;
     return
 end
 
@@ -15,10 +18,8 @@ dx = obj.dxdydz_bb(1);
 dy = obj.dxdydz_bb(2);
 dz = obj.dxdydz_bb(3);
 
-% find y-slice that we are in -> use to get transform angle
-y_slice = find_yslice(position(2), y_slice_minmax);
-
 % get rotation angle A based on slice/block we are in
+y_slice = find_yslice(position(2), y_slice_minmax);
 if abs(y_slice) < dy/2 % i.e. slice [0, dy], NOT [-dy, 0] (because we check the first coordinate, i.e. 0)
     A = 0; % explicit zero to avoid problems with rounding error
 else
@@ -26,20 +27,36 @@ else
     A = deg2rad(deg_rot_per_L_in_y)*y_slice;
 end
 
-% --> TRANSFORM GLOBAL->LOCAL
-position_rotated = rotate_y(position, -A); % rotate negative angle
-fn_RotReverse = @(pos) rotate_y(pos, A); % rotate positive angle
+% Rotate position
+fn_Rot = @(pos) rotate_y(pos, -A); % rotate negative angle
+fn_RotReverse = @(pos) rotate_y(pos, +A); % rotate positive angle
+position_rotated = fn_Rot(position);
 position_SLICE = mod(position_rotated, [0, dy, 0]); % clip to plane
 
-%%% 2) transform
+% Apply sin(x) displacement in z'
 xCoord = position_SLICE(1); % [-inf, +inf]
 yCoord = position_SLICE(2);
 zCoord = position_SLICE(3) - sine(obj, xCoord);
+
+% Compute iY and iZ
+iY = 1+floor(position_rotated(2)/dy);
 iZ = 1+floor(zCoord/dz);
+
+% Shift axis half block to the right if iZ is odd and compute iX
+if obj.shift_block
+    xCoord = xCoord - (mod(iZ, 2))*dx/2;
+end
+iX = 1+floor(xCoord/dx); % Compute iX like before with iY & iZ
+
+% Compute offset from rotated frame
+ddxx = (iX-1)*dx;
 ddzz = (iZ-1)*dz;
-ddxx = (mod(iZ, 2))*dx/2;
+
+% Subtract offset from rotated axis and find local position
 position_LOCAL = [xCoord, yCoord, zCoord] - [ddxx, 0, ddzz];
-position_LOCAL = mod(position_LOCAL, [dx, 0, 0]);
+
+% Calculate inverse transform
+fn_TransformInverse = @(pos) obj.local2global(pos, iX, iY, iZ);
 
 end
 
