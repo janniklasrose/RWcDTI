@@ -6,7 +6,7 @@ function [pos_global] = local2global(obj, pos_local, iX, iY, iZ)
 
 % translation offset
 if obj.shift_block
-    shift = mod(iZ, 2)/2;
+    shift = mod(iZ+1, 2)/2;
 else
     shift = 0;
 end
