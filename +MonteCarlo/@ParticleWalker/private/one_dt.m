@@ -29,7 +29,8 @@ while norm(dxdydz, 2) > ZERO
     end
 
     % substrate checks
-    [position_LOCAL, position_rotated, fn_RotReverse] = substrate.transformPosition(position(1, 1:3));
+    [position_LOCAL, fn_TransformInverse, fn_Rot, fn_RotReverse] = substrate.transformPosition(position(1, 1:3));
+    dxdydz  = fn_Rot(dxdydz);
     
     intersectInfo = substrate.intersectMyocytes(position_LOCAL, dxdydz, 'local');
     % intersectInfo now contains info about first encountered intersection
@@ -54,12 +55,12 @@ while norm(dxdydz, 2) > ZERO
                 dxdydz(:) = Geometry.reflect(dxdydz, intersectInfoBB.vertices);
             end
 
-            position_rotated = position_rotated + dxdydz_toIntersection;
-            position_rotated = position_rotated + dxdydz*stepEps;
+            position_LOCAL = position_LOCAL + dxdydz_toIntersection;
+            position_LOCAL = position_LOCAL + dxdydz*stepEps;
             dxdydz = dxdydz*(1-stepEps); % remove eps
 
         else
-            position_rotated = position_rotated + dxdydz; % no need to worry about 'position_LOCAL'
+            position_LOCAL = position_LOCAL + dxdydz; % no need to worry about 'position_LOCAL'
             dxdydz = zeros(size(dxdydz)); % explicitly set to zero
         end
     else % an intersection was encountered
@@ -111,13 +112,14 @@ while norm(dxdydz, 2) > ZERO
 
         % step a little bit to get off face
         % - this requires faces to be at least a certain distance away from each other (geometry check!)
-        position_rotated = position_rotated + dxdydz_toIntersection; % initial sub-step to intersection side
-        position_rotated = position_rotated + dxdydz*stepEps; % little Eps extra of new step to move away from face
+        position_LOCAL = position_LOCAL + dxdydz_toIntersection; % initial sub-step to intersection side
+        position_LOCAL = position_LOCAL + dxdydz*stepEps; % little Eps extra of new step to move away from face
         dxdydz = dxdydz*(1-stepEps); % remove eps
     end
 
     % transform the position back from the local to the global frame
-    position(1, 1:3) = fn_RotReverse(position_rotated);
+    position(1, 1:3) = fn_TransformInverse(position_LOCAL);
+    dxdydz = fn_RotReverse(dxdydz);
     position(1, 4) = myoIndex;
 
 end
