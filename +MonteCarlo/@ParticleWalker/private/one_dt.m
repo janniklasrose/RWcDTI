@@ -29,7 +29,7 @@ while norm(dxdydz, 2) > ZERO
     end
 
     % substrate checks
-    [position_LOCAL, fn_TransInverse, fn_Rot, fn_RotReverse] = substrate.transformPosition(position(1, 1:3));
+    [position_LOCAL, fn_TransformInverse, fn_Rot, fn_RotReverse] = substrate.transformPosition(position(1, 1:3));
     dxdydz  = fn_Rot(dxdydz);
     
     intersectInfo = substrate.intersectMyocytes(position_LOCAL, dxdydz, 'local');
