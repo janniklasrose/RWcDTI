@@ -10,16 +10,20 @@ classdef Substrate < handle
     end
 
     properties
-        stepType = 'constant'
         transit_model = 'constant'
         kappa = 0
         D_e = 0
         D_i = 0
+        dim = 'xyz'
     end
 
     properties(Access=private)
         type
         transform
+    end
+
+    properties(SetAccess=immutable, GetAccess=public)
+        boundary
     end
 
     methods
@@ -39,23 +43,27 @@ classdef Substrate < handle
                 obj.myocytes = myocytes;
             end
 
-            obj.type = type;
             validatestring(type, {'block', 'full'});
-            switch type
-                case 'block'
-                    p = inputParser;
-                    addRequired(p, 'y_slice_minmax');
-                    addParameter(p, 'deg_rot_per_L_in_y', 0);
-                    parse(p, varargin{:});
-
-                    obj.transform = Substrate.Transform;
-                    obj.transform.dxdydz_bb = dxdydz;
-                    obj.transform.y_slice_minmax = p.Results.y_slice_minmax;
-                    obj.transform.deg_rot_per_L_in_y = p.Results.deg_rot_per_L_in_y;
-
-                case 'full'
-                    error('Error:NotImplemented', 'Full geometry not supported');
-                    %TODO: ensure .transform is an identity transform!!
+            obj.type = type;
+            obj.transform = Substrate.Transform; % identity transform by default
+            obj.boundary = 'reflect';
+            if strcmp(type, 'block')
+                obj.boundary = 'periodic';
+                obj.transform.isIdentity = false; % disable identity
+                obj.transform.dxdydz_bb = dxdydz;
+                % parse the inputs
+                p = inputParser;
+                addRequired(p, 'y_slice_minmax');
+                p.KeepUnmatched = true; % pass other arguments as struct
+                parse(p, varargin{:});
+                obj.transform.y_slice_minmax = p.Results.y_slice_minmax;
+                params = fieldnames(p.Unmatched);
+                for i = 1:numel(params)
+                    name = params{i};
+                    try %#ok<TRYNC> % no need to catch, we will simply try
+                        obj.transform.(name) = p.Unmatched.(name);
+                    end
+                end
             end
 
             obj.buildCache(); % requires .dxdydz and .myocytes to be set

@@ -1,0 +1,19 @@
+montecarlo:
+
+  # initial seed for the random number generator
+  rngseed: 0
+
+  # number of walkers
+  N_p: 10
+
+  # seeding location for walkers
+  # can be either a character string...
+  seedbox: 'voxel+buffer' # 'voxel', 'voxel+buffer'
+  # or a bounding box (which may be singular for some dimensions)
+  #seedbox: [0, 1, 0, 0, 0, 3] # [xmin,xmax,ymin,ymax,zmin,zmax]
+
+  # number of parallel cores
+  num_cores: 1
+
+  # stepping type used in the simulation
+  stepType: 'constant'

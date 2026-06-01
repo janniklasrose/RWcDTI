@@ -23,11 +23,21 @@ classdef ScanSequence
 
     properties(Dependent)
         NT
+        bvalue
     end
     methods
         function [NT] = get.NT(obj)
             NT = length(obj.dt);
         end
+        function [b] = get.bvalue(obj)
+            t = cumsum(obj.dt);
+            k = cumtrapz(t, obj.gG);
+            b = trapz(t, k.^2);
+        end
+    end
+
+    methods(Static)
+        [sequence] = create(NT, dt_max, SeqName, varargin)
     end
 
 end

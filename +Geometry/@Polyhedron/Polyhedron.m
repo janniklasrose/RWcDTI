@@ -106,7 +106,7 @@ classdef Polyhedron < handle
     end
     methods
         function [bytes] = get.Bytes(obj)
-            bytes = sizeof(obj);
+            bytes = obj.sizeof();
         end
         function [sizeof] = sizeof(obj)
             sizeof = 0;

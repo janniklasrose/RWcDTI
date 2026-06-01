@@ -2,7 +2,7 @@ function [certain] = intersection_is_certain(intersect, u, v, t, test_end, eps)
 % Check if the intersection is certain by some tolerance
 
 if nargin < 5
-    test_end = False;
+    test_end = false;
 end
 if nargin < 6
     eps = 1e-6; % relative wrt 1 for bary, wrt step length for t

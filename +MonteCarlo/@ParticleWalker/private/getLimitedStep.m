@@ -5,7 +5,7 @@ function [dxdydz] = getLimitedStep(dim, maxStepLength, varargin)
 
 % step in space
 maxStep_squared = maxStepLength^2; % pre-compute here
-dxdydz = zeros(1, dim);
+dxdydz = zeros(1, 3);
 needUpdate = true();
 tries = 0;
 while needUpdate
@@ -17,7 +17,8 @@ while needUpdate
     end
 
     % update BEFORE checking new needUpdate (because of initialisation)
-    dxdydz = getStep(dim, varargin{:});
+    mask = contains({'x', 'y', 'z'}, cellstr(dim.'));
+    dxdydz(mask) = getStep(sum(mask), varargin{:});
     needUpdate = sum(dxdydz.^2) > maxStep_squared;
 
 end
@@ -37,7 +38,7 @@ end
 if length(varargin) < 2
     stream = {}; % default MATLAB
 else
-    stream = {varargin{2}};
+    stream = varargin(2); % get cell, not content
 end
 
 switch stepType
@@ -45,8 +46,7 @@ switch stepType
         dxdydz = randn(stream{:}, 1, dim);
     case 'constant'
         choiceVector = [-1, +1]; % left or right
-        replacement = true;
-        dxdydz = randsample(stream{:}, choiceVector, dim, replacement);
+        dxdydz = choiceVector(randi(stream{:}, numel(choiceVector), [1, dim]));
     otherwise
         error('Error:NotImplemented', 'Step type not supported');
 end

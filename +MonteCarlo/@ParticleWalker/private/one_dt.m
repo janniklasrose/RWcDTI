@@ -1,8 +1,8 @@
-function [position] = one_dt(position, dt, stream, substrate)
+function [position] = one_dt(position, dt, stream, substrate, stepType)
 % Perform a single time step
 
 % get step length (dim=3 for 3D), max 5stdevs
-dxdydz_normaldistrib = getLimitedStep(3, 5, substrate.stepType, stream);
+dxdydz_normaldistrib = getLimitedStep(substrate.dim, 5, stepType, stream);
 
 myoIndex = position(1, 4);
 
@@ -11,10 +11,10 @@ myoIndex = position(1, 4);
 if isnan(myoIndex) % none
     D_old = substrate.D_e;
 else
-    D_old = substrate.D_i; %TODO: assign based on individual myocyte with index iM
+    D_old = substrate.D_i;
 end
 D_new = D_old; % D_new holds the new diffusivity for every sub-step
-dxdydz = dxdydz_normaldistrib * sqrt(2*dt*D_old); % currently only D_i and D_e
+dxdydz = dxdydz_normaldistrib * sqrt(2*dt*D_old);
 
 % until no more step left
 ZERO = 1e-12; % 1e-12[m] = 1e-6[um] (note: eps(1) == 2e-16)
@@ -29,7 +29,8 @@ while norm(dxdydz, 2) > ZERO
     end
 
     % substrate checks
-    [position_LOCAL, position_rotated, fn_RotReverse] = substrate.transformPosition(position(1, 1:3));
+    [position_LOCAL, fn_TransformInverse, fn_Rot, fn_RotReverse] = substrate.transformPosition(position(1, 1:3));
+    dxdydz  = fn_Rot(dxdydz);
     
     intersectInfo = substrate.intersectMyocytes(position_LOCAL, dxdydz, 'local');
     % intersectInfo now contains info about first encountered intersection
@@ -50,14 +51,16 @@ while norm(dxdydz, 2) > ZERO
             dxdydz = dxdydz*(1-intersectInfoBB.t); % what's remaining
 
             % ENABLE if the particles cannot leave the bounding box
-            %dxdydz(:) = Geometry.reflect(dxdydz, intersectInfoBB.vertices);
+            if strcmp(substrate.boundary, 'reflect')
+                dxdydz(:) = Geometry.reflect(dxdydz, intersectInfoBB.vertices);
+            end
 
-            position_rotated = position_rotated + dxdydz_toIntersection;
-            position_rotated = position_rotated + dxdydz*stepEps;
+            position_LOCAL = position_LOCAL + dxdydz_toIntersection;
+            position_LOCAL = position_LOCAL + dxdydz*stepEps;
             dxdydz = dxdydz*(1-stepEps); % remove eps
 
         else
-            position_rotated = position_rotated + dxdydz; % no need to worry about 'position_LOCAL'
+            position_LOCAL = position_LOCAL + dxdydz; % no need to worry about 'position_LOCAL'
             dxdydz = zeros(size(dxdydz)); % explicitly set to zero
         end
     else % an intersection was encountered
@@ -72,7 +75,7 @@ while norm(dxdydz, 2) > ZERO
                 % Fieremans et al, 2010, NMR Biomed.
                 % Monte Carlo study of a two-compartment exchange model of diffusion
                 % DOI:10.1002/nbm.1577
-                ds = norm(dxdydz, 2)*intersectInfo.t; % distance to membrane
+                ds = computeNormalDistance(intersectInfo.vertices, dxdydz_toIntersection);
                 term = (2 * ds * substrate.kappa)/D_old;
                 probability_of_transit = term/(1+term);
             otherwise
@@ -80,7 +83,8 @@ while norm(dxdydz, 2) > ZERO
         end
 
         U = rand(stream, 1);
-        if U < probability_of_transit % ??? ensure boundary cases (rand==0 or rand==1 are handled correctly)
+        if U < probability_of_transit
+            %TODO: ensure boundary cases (rand==0 or rand==1) are handled correctly
             % --> go through
 
             % update index %TODO: ensure this is done correctly!!!
@@ -94,7 +98,7 @@ while norm(dxdydz, 2) > ZERO
             if isnan(myoIndex) % none
                 D_new = substrate.D_e;
             else
-                D_new = substrate.D_i; %TODO: assign based on individual myocyte with index iM
+                D_new = substrate.D_i;
             end
 
             dxdydz = dxdydz * sqrt(D_new/D_old);
@@ -108,15 +112,43 @@ while norm(dxdydz, 2) > ZERO
 
         % step a little bit to get off face
         % - this requires faces to be at least a certain distance away from each other (geometry check!)
-        position_rotated = position_rotated + dxdydz_toIntersection; % initial sub-step to intersection side
-        position_rotated = position_rotated + dxdydz*stepEps; % little Eps extra of new step to move away from face
+        position_LOCAL = position_LOCAL + dxdydz_toIntersection; % initial sub-step to intersection side
+        position_LOCAL = position_LOCAL + dxdydz*stepEps; % little Eps extra of new step to move away from face
         dxdydz = dxdydz*(1-stepEps); % remove eps
     end
 
     % transform the position back from the local to the global frame
-    position(1, 1:3) = fn_RotReverse(position_rotated);
+    position(1, 1:3) = fn_TransformInverse(position_LOCAL);
+    dxdydz = fn_RotReverse(dxdydz);
     position(1, 4) = myoIndex;
 
 end
+
+end
+
+function distance = computeNormalDistance(faceVertices, step)
+% Find the projected distance in the normal direction to the plane
+
+% get the face normal
+V1 = faceVertices(1, :);
+V2 = faceVertices(2, :);
+V3 = faceVertices(3, :);
+edge01 = V2 - V1;
+edge02 = V3 - V1;
+normal = Geometry.crossFast2(edge01, edge02);
+
+% compute the dot product using normalised vectors
+normal = normal/norm(normal, 2);
+step_normalized = step/norm(step, 2);
+dotproduct = dot(step_normalized, normal);
+
+% determine the distance
+%{
+theta = acos(dotproduct);
+if theta >= pi/2, theta = pi - theta; end
+t = cos(theta);
+%}
+t = abs(dotproduct); % this is the equivalent of the commented code above
+distance = norm(step,2)*t;
 
 end

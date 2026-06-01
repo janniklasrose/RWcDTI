@@ -51,13 +51,23 @@ function [nWorkers] = active_workers()
 % load global variable (set by user or in setup_par)
 global NUM_CORES
 
-pool = gcp('nocreate'); % query
+try
+    pool = gcp('nocreate'); % query
+catch exception
+    % problem with pool, most likely no parallel license
+    if strcmp(exception.identifier, 'MATLAB:UndefinedFunction')
+        fprintf('Parallel features seem to be unavailable.\n');
+    end
+    pool = [];
+end
 if isempty(pool)
     nWorkers = []; % will cause reverse-order serial execution of parfor loop
     fprintf('No parallel pool exists, running loop in serial.\n');
 else % ~isempty(pool)
     nWorkers = pool.NumWorkers; % use existing pool
-    nWorkers = min(NUM_CORES, nWorkers); % limit cores
+    if ~isempty(NUM_CORES)
+        nWorkers = min(NUM_CORES, nWorkers); % limit cores
+    end
     fprintf('A parallel pool exists, running loop in parallel (NumWorkers = %i).\n', nWorkers);
 end
 
@@ -67,9 +77,7 @@ function [bar] = parforbar_new(N)
 % attempt to create a new parfor progress bar
 
 try
-    mfilepath = fileparts(which(mfilename()));
-    addpath(fullfile(mfilepath, 'ParforProgressbar'));
-    bar = ParforProgressbar(N);
+    bar = ParforProgressbar(N); % see /external/ParforProgMon
 catch
     bar = [];
 end

@@ -1,7 +1,13 @@
 substrate:
   geometry:
-    myocytes:
-      data: # specify the myocyte Polyhedra here
+    myocytes: # cell geometries, specified either as a file or directly here
+
+      # give the path to a .mat file that contains the myocyte geometries
+      #file: myocytes.mat
+
+      # or specify the myocyte triangulation here
+      data: # a list of Vertices & Faces, each of them 2D lists
+        # myocyte 1
         - Vertices:
           - [0.1, 0.1, 0.1]
           - [0.1, 0.9, 0.1]
@@ -12,6 +18,7 @@ substrate:
           - [1, 2, 4]
           - [1, 3, 4]
           - [2, 3, 4]
+        # myocyte 2
         - Vertices:
           - [0.1, 1.1, 0.1]
           - [0.1, 1.9, 0.1]
@@ -22,6 +29,8 @@ substrate:
           - [1, 2, 4]
           - [1, 3, 4]
           - [2, 3, 4]
+
+    # size of the block
     LxLyLz:
       - 1 # block.Lx
       - 2 # block.Ly

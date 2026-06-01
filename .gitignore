@@ -7,3 +7,6 @@
 cluster/
 # Ignore MATLAB data files
 *.mat
+# Ignore MATLAB project files
+resources/
+*.prj
