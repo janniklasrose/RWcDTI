@@ -1,5 +1,10 @@
 function [position_LOCAL, fn_TransformInverse, fn_Rot, fn_RotReverse] = global2local(obj, position)
-% transform position from global to local
+%GLOBAL2LOCAL Transform a global position into the local block frame.
+%   [position_LOCAL, fn_TransformInverse, fn_Rot, fn_RotReverse] =
+%   global2local(obj, position) returns the local coordinates used for
+%   block-local intersection checks. The returned function handle restores
+%   local positions into the global frame, and the returned rotation
+%   functions convert step vectors between frames.
 
 % handle identity case first
 if obj.isIdentity
@@ -61,7 +66,7 @@ fn_TransformInverse = @(pos) obj.local2global(pos, iX, iY, iZ);
 end
 
 function [y_slice] = find_yslice(pos_y, y_slice_minmax)
-% find yslice
+%FIND_YSLICE Return the lower y-bound of the slice containing pos_y.
 
 i_slice = find(pos_y >= y_slice_minmax(1, :) & pos_y < y_slice_minmax(2, :), 1); % first find
 if isempty(i_slice)

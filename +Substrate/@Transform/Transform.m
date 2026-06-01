@@ -1,4 +1,9 @@
 classdef Transform
+    % Transform maps positions between global substrate and local block frames.
+    %
+    % For full substrates the transform is the identity. For block substrates
+    % it applies slice-wise y-axis rotations, optional sinusoidal displacement
+    % in z, and optional staggered block shifts.
 
     properties
         isIdentity = true

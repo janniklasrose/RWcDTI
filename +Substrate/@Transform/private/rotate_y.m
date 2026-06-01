@@ -1,5 +1,5 @@
 function [pos] = rotate_y(pos, theta)
-% perform a rotation around y using an angle
+%ROTATE_Y Rotate positions around the y-axis by theta radians.
 
 % identity matrix if A=0
 rot = [cos(theta),0,sin(theta);

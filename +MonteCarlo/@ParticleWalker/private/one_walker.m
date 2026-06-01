@@ -1,6 +1,7 @@
 function [pos_i, phi_i, flag_i] = one_walker(i, pos_all, phi_all, flag_all, config, sequence, substrate)
-% core function to be executed for each walker
-%   receives index of walker and global data to pick its own (and return that only)
+%ONE_WALKER Simulate one walker through the full scan sequence.
+%   Receives the walker index and shared arrays, then returns only the
+%   updated position, phase, and flag for that walker.
 
 % load data
 pos_i  = pos_all(i, :);  % [ [x,y,z]_1 ; ... ; [x,y,z]_N ] % position
