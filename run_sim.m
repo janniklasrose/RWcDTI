@@ -131,32 +131,11 @@ end
 
 function [s_out] = combine_structs(varargin)
 
-% find fieldnames
 structures = varargin;
-N_structures = numel(structures);
-struct_fieldnames = cellfun(@(s) fieldnames(s)', structures, 'UniformOutput', false, 'ErrorHandler', @(err, varargin) '-');
-aint_struct = cellfun(@(s) isequal(s, '-'), struct_fieldnames);
-if any(aint_struct)
-    assert(all(aint_struct), 'field is both struct and value');
-    s_out = structures{end}; % take the last value
-    return
-end
-fields = unique([struct_fieldnames{:}]);
-
-% initialise empty output struct
-s_out = struct();
-
-for i = 1:numel(fields)
-    fieldname = fields{i};
-    field_values = cell(1, N_structures);
-    for j = 1:numel(structures)
-        s = structures{j};
-        if isfield(s, fieldname)
-            field_values{j} = s.(fieldname);
-        end
-    end
-    field_values = field_values(~cellfun(@isempty, field_values));
-    s_out.(fieldname) = combine_structs(field_values{:});
+s_out = structures{1};
+for i = 2:numel(structures)
+    add = structures{i};
+    s_out = yaml.merge_struct(s_out, add, {}, 'deep');
 end
 
 end
