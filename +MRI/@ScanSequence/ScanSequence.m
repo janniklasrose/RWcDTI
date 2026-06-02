@@ -9,8 +9,8 @@ classdef ScanSequence
     end
 
     properties(SetAccess=private)
-        dt(1,:)
-        gG(1,:) %TODO: support 1D & 3D gradient vector
+        dt(1, :) double {mustBeReal, mustBeFinite, mustBePositive}
+        gG(:, :) double {mustBeReal, mustBeFinite}
     end
     methods
         function dt_n = get_dt(obj, n)
