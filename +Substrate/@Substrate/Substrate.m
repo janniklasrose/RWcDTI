@@ -75,13 +75,11 @@ classdef Substrate < handle
         [myoIndex] = findMyocyte(obj, position, refFrame)
         [varargout] = transformPosition(obj, position)
         [intersectInfo] = intersectMyocytes(obj, position, dxdydz, refFrame)
+        [intersectInfo, leavesBlock] = intersectBlock(obj, position, dxdydz)
     end
 
     properties(SetAccess=private, GetAccess=private) % cache
         myocyte_bbrange
-    end
-
-    properties(SetAccess=private) % cache
         block_bb
     end
 
