@@ -73,16 +73,21 @@ classdef Substrate < handle
 
     methods
         [myoIndex] = findMyocyte(obj, position, refFrame)
-        [needsChecks] = needsChecking(obj, position, step_xyz, refFrame)
         [varargout] = transformPosition(obj, position)
         [intersectInfo] = intersectMyocytes(obj, position, dxdydz, refFrame)
+        [intersectInfo, leavesBlock] = intersectBlock(obj, position, dxdydz)
     end
 
-    properties(SetAccess=private) % cache
+    properties(SetAccess=private, GetAccess=private) % cache
         myocyte_bbrange
         block_bb
     end
-    methods
+
+    methods(Access=private)
+        [needsChecks] = needsChecking(obj, position, step_xyz, refFrame)
+    end
+
+    methods(Access=private)
         function buildCache(obj)
             % build the cache
 

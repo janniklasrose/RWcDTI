@@ -41,11 +41,10 @@ while norm(dxdydz, 2) > ZERO
     stepEps = 1e-8;
     if isempty(intersectInfo) % no intersection encountered
 
-        position_future = position_LOCAL + dxdydz;
-        if ~substrate.block_bb.BoundingBox.containsPoint(position_future) % would leave the block
+        [intersectInfoBB, leavesBlock] = substrate.intersectBlock(position_LOCAL, dxdydz);
+        if leavesBlock
 
             % may throw an error, just take it and flag particle
-            intersectInfoBB = substrate.block_bb.intersection(position_LOCAL, dxdydz);
             if isempty(intersectInfoBB)
                 error('ParticleWalker:one_dt:bb_inconsistent', ...
                       'Empty intersection when there should be one');
