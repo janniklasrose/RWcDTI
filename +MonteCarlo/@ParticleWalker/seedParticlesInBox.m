@@ -1,5 +1,10 @@
 function [] = seedParticlesInBox(obj, boundingBoxes, particlesPerBox)
-% Seed particles in boxes
+%SEEDPARTICLESINBOX Seed particles uniformly inside non-overlapping boxes.
+%   seedParticlesInBox(obj, boundingBoxes) distributes obj.N_p particles
+%   across boxes proportionally to box volume.
+%
+%   seedParticlesInBox(obj, boundingBoxes, particlesPerBox) uses an explicit
+%   row vector of particle counts, or a scalar count for every box.
 %
 %   boundingBox = [min_x1, min_x2; max_x, max_x2; ...; min_z1, min_z2; max_z1, max_z2]
 %       \

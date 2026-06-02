@@ -1,5 +1,8 @@
 function [pos_global] = local2global(obj, pos_local, iX, iY, iZ)
-% transform a position inside block with indices iX, iY, iZ
+%LOCAL2GLOBAL Transform a local block position into global coordinates.
+%   pos_global = local2global(obj, pos_local, iX, iY, iZ) reverses
+%   the block offset, sinusoidal displacement, and y-axis rotation for the
+%   block identified by one-based indices iX, iY, and iZ.
 
 % Change block index to be zero-based
 [iX, iY, iZ] = deal(iX-1, iY-1, iZ-1);

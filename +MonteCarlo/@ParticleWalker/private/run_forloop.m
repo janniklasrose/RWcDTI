@@ -1,6 +1,7 @@
 function [varargout] = run_forloop(N, func, varargin)
-% wrapper to call a function in a for loop
-%   enables both serial and parallel loop execution
+%RUN_FORLOOP Execute a walker function in serial or parallel.
+%   varargout = run_forloop(N, func, varargin) calls func once for each
+%   walker index and reassembles each output into an array.
 
 % prepare output array
 nArgout = nargout();
@@ -44,7 +45,7 @@ end
 end
 
 function [nWorkers] = active_workers()
-% get the number of workers from parpool (or none if no pool exists)
+%ACTIVE_WORKERS Return the active parpool worker count, or empty for serial.
 %   always prints a message informing the user. this is to avoid unexpected behaviour,
 %   such as when the user forgot to start a parallel pool and should know about it.
 
@@ -74,7 +75,7 @@ end
 end
 
 function [bar] = parforbar_new(N)
-% attempt to create a new parfor progress bar
+%PARFORBAR_NEW Attempt to create a new parfor progress bar.
 
 try
     bar = ParforProgressbar(N); % see /external/ParforProgMon
@@ -85,7 +86,7 @@ end
 end
 
 function [] = parforbar_increment(bar)
-% increment the parfor progress bar (if one exists)
+%PARFORBAR_INCREMENT Increment the parfor progress bar, if one exists.
 
 if ~isempty(bar)
     bar.increment();
@@ -94,7 +95,7 @@ end
 end
 
 function [] = parforbar_delete(bar)
-% delete the parfor progress bar (if one exists)
+%PARFORBAR_DELETE Delete the parfor progress bar, if one exists.
 
 if ~isempty(bar)
     bar.delete();

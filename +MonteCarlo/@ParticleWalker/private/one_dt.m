@@ -1,5 +1,8 @@
 function [position] = one_dt(position, dt, stream, substrate, stepType)
-% Perform a single time step
+%ONE_DT Perform one Monte Carlo diffusion time step for a particle.
+%   position = one_dt(position, dt, stream, substrate, stepType) advances a
+%   single particle position by one sequence time step. The fourth position
+%   column stores the current myocyte index, or NaN for extracellular space.
 
 % get step length (dim=3 for 3D), max 5stdevs
 dxdydz_normaldistrib = getLimitedStep(substrate.dim, 5, stepType, stream);
