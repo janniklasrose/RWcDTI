@@ -1,21 +1,21 @@
 classdef ParticleWalker < handle
 
     properties(SetAccess=immutable, GetAccess=public)
-        N_p; % number of particles
+        N_p(1, 1) double {mustBeInteger, mustBePositive} = 1; % number of particles
     end
 
     properties(SetAccess=private)
-        position; % [nP x DIM] array of [x, y, z]-positions of all particles
-        phase; % [nP x DIM] array of accumulated [x, y, z]-phase of all particles
-        flag; % {nP x 1} cell array of flags
+        position(:, :) double {mustBeReal}; % [nP x DIM] array of [x, y, z]-positions of all particles
+        phase(:, 3) double {mustBeReal, mustBeFinite}; % [nP x DIM] array of accumulated [x, y, z]-phase of all particles
+        flag(:, 1) cell; % {nP x 1} cell array of flags
     end
 
     properties(SetAccess=private)
-        rng_seed; % seed to (all) RNGs
+        rng_seed(1, 1) double {mustBeInteger, mustBeNonnegative}; % seed to (all) RNGs
     end
 
     properties
-        stepType = 'constant';
+        stepType char {mustBeMember(stepType, {'constant', 'normal'})} = 'constant';
     end
 
     methods(Access=public)
@@ -35,6 +35,7 @@ classdef ParticleWalker < handle
             obj.rng_seed = seed;
 
             % assign
+            validateattributes(N_p, {'numeric'}, {'scalar', 'integer', 'positive'});
             obj.N_p = N_p;
 
             % init

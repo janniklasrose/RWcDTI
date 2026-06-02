@@ -5,30 +5,31 @@ classdef Substrate < handle
     end
 
     properties(SetAccess=private) % set in the constructor
-        dxdydz(1, 3)
+        dxdydz(1, 3) double {mustBeReal, mustBeFinite, mustBePositive} = [1, 1, 1]
         myocytes(1, :) Geometry.Polyhedron
     end
 
     properties
-        transit_model = 'constant'
-        kappa = 0
-        D_e = 0
-        D_i = 0
-        dim = 'xyz'
+        transit_model char {mustBeMember(transit_model, {'constant', 'Fieremans2010'})} = 'constant'
+        kappa(1, 1) double {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        D_e(1, 1) double {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        D_i(1, 1) double {mustBeReal, mustBeFinite, mustBeNonnegative} = 0
+        dim char {mustBeMember(dim, {'x', 'y', 'z', 'xy', 'xz', 'yz', 'xyz'})} = 'xyz'
     end
 
     properties(Access=private)
-        type
-        transform
+        type char {mustBeMember(type, {'block', 'full'})} = 'full'
+        transform Substrate.Transform
     end
 
     properties(SetAccess=immutable, GetAccess=public)
-        boundary
+        boundary char {mustBeMember(boundary, {'reflect', 'periodic'})} = 'reflect'
     end
 
     methods
         function obj = Substrate(dxdydz, myocytes, type, varargin)
 
+            validateattributes(dxdydz, {'numeric'}, {'row', 'numel', 3, 'real', 'finite', 'positive'});
             obj.dxdydz = dxdydz;
 
             % store myocytes (convert first if necessary)
@@ -79,8 +80,8 @@ classdef Substrate < handle
     end
 
     properties(SetAccess=private, GetAccess=private) % cache
-        myocyte_bbrange
-        block_bb
+        myocyte_bbrange(1, :) double {mustBeReal, mustBeFinite}
+        block_bb Geometry.Polyhedron
     end
 
     methods(Access=private)
